@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horarios Disponibles de los Docentes</title>
-    <script src="https://apis.google.com/js/api.js"></script>
+    <title>Calendario de Horarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.2.0/main.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.2.0/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@3.2.0/main.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,72 +19,45 @@
             padding: 20px;
             text-align: center;
         }
-        #horarios {
-            padding: 20px;
-        }
-        #eventos {
-            margin-top: 20px;
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Horarios Disponibles de los Docentes</h1>
+        <h1>Calendario de Horarios de Docentes</h1>
     </header>
 
-    <section id="horarios">
-        <h2>Eventos del Calendario de Docentes</h2>
-        <div id="eventos">Cargando eventos...</div>
-    </section>
+    <div id="calendar"></div>
 
     <footer>
         <p>&copy; 2025 Incuba Andina Lab - UAC</p>
     </footer>
 
     <script>
-        // Cargar la API de Google
-        function initApi() {
-            gapi.client.init({
-                'apiKey': 'TU_API_KEY',
-                'clientId': 'TU_CLIENT_ID',
-                'scope': 'https://www.googleapis.com/auth/calendar.readonly',
-                'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest']
-            }).then(function() {
-                listEvents();  // Llamada a la función que obtiene los eventos
-            });
-        }
-
-        function listEvents() {
-            var calendarId = 'primary';  // O puedes poner el ID del calendario del docente
-            gapi.client.calendar.events.list({
-                'calendarId': calendarId,
-                'timeMin': (new Date()).toISOString(),
-                'showDeleted': false,
-                'singleEvents': true,
-                'maxResults': 10,
-                'orderBy': 'startTime'
-            }).then(function(response) {
-                var events = response.result.items;
-                var eventosDiv = document.getElementById('eventos');
-                if (events.length > 0) {
-                    for (var i = 0; i < events.length; i++) {
-                        var event = events[i];
-                        var when = event.start.dateTime || event.start.date;
-                        eventosDiv.innerHTML += `<p>${event.summary} - ${when}</p>`;
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    {
+                        title: 'Reunión con Docente 1',
+                        start: '2025-04-05T09:00:00',
+                        end: '2025-04-05T11:00:00'
+                    },
+                    {
+                        title: 'Reunión con Docente 2',
+                        start: '2025-04-06T14:00:00',
+                        end: '2025-04-06T16:00:00'
                     }
-                } else {
-                    eventosDiv.innerHTML = 'No hay eventos próximos.';
-                }
+                ]
             });
-        }
 
-        // Cargar la API y autenticar
-        function handleClientLoad() {
-            gapi.load('client:auth2', initApi);
-        }
-
-        // Llamar a la inicialización cuando cargue la página
-        window.onload = handleClientLoad;
+            calendar.render();
+        });
     </script>
 </body>
 </html>
