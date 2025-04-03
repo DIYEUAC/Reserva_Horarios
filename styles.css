@@ -22,35 +22,9 @@ h1 {
     margin-top: 20px;
 }
 
-.calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-}
-
-.calendar div {
-    padding: 20px;
-    text-align: center;
-    border: 1px solid #ddd;
-    cursor: pointer;
-}
-
-.calendar div:hover {
-    background-color: #f1f1f1;
-}
-
-.available {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.unavailable {
-    background-color: #f44336;
-    color: white;
-}
-
-.available:hover {
-    background-color: #45a049;
+#calendar {
+    max-width: 900px;
+    margin: 40px auto;
 }
 
 footer {
