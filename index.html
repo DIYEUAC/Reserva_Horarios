@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horarios Disponibles de los Docentes</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        #horarios {
+            padding: 20px;
+        }
+        #eventos {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -12,28 +31,58 @@
     </header>
 
     <section id="horarios">
-        <h2>Calendario de Disponibilidad</h2>
-        <div class="calendar">
-            <div class="day">Lunes</div>
-            <div class="day">Martes</div>
-            <div class="day">Miércoles</div>
-            <div class="day">Jueves</div>
-            <div class="day">Viernes</div>
-            <div class="day">Sábado</div>
-            <div class="day">Domingo</div>
-
-            <div class="available" onclick="showAvailableSlots('Docente 1', 'Lunes')">1</div>
-            <div class="unavailable" onclick="alert('No disponible')">2</div>
-            <div class="available" onclick="showAvailableSlots('Docente 2', 'Martes')">3</div>
-            <div class="available" onclick="showAvailableSlots('Docente 3', 'Miércoles')">4</div>
-            <!-- Más días -->
-        </div>
+        <h2>Eventos del Calendario de Docentes</h2>
+        <div id="eventos">Cargando eventos...</div>
     </section>
 
     <footer>
         <p>&copy; 2025 Incuba Andina Lab - UAC</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Cargar la API de Google
+        function initApi() {
+            gapi.client.init({
+                'apiKey': 'TU_API_KEY',
+                'clientId': 'TU_CLIENT_ID',
+                'scope': 'https://www.googleapis.com/auth/calendar.readonly',
+                'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest']
+            }).then(function() {
+                listEvents();  // Llamada a la función que obtiene los eventos
+            });
+        }
+
+        function listEvents() {
+            var calendarId = 'primary';  // O puedes poner el ID del calendario del docente
+            gapi.client.calendar.events.list({
+                'calendarId': calendarId,
+                'timeMin': (new Date()).toISOString(),
+                'showDeleted': false,
+                'singleEvents': true,
+                'maxResults': 10,
+                'orderBy': 'startTime'
+            }).then(function(response) {
+                var events = response.result.items;
+                var eventosDiv = document.getElementById('eventos');
+                if (events.length > 0) {
+                    for (var i = 0; i < events.length; i++) {
+                        var event = events[i];
+                        var when = event.start.dateTime || event.start.date;
+                        eventosDiv.innerHTML += `<p>${event.summary} - ${when}</p>`;
+                    }
+                } else {
+                    eventosDiv.innerHTML = 'No hay eventos próximos.';
+                }
+            });
+        }
+
+        // Cargar la API y autenticar
+        function handleClientLoad() {
+            gapi.load('client:auth2', initApi);
+        }
+
+        // Llamar a la inicialización cuando cargue la página
+        window.onload = handleClientLoad;
+    </script>
 </body>
 </html>
