@@ -52,11 +52,91 @@
 </header>
 <body>
   <h1 style="text-align:center;">Horarios de Reuniones</h1>
-  <h2 style="text-align:center;">Prof. Andy 🟢</h2>
-  <h2 style="text-align:center;">Prof. Dennisse 🔴</h2>
+  <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
+  <h2 style="margin: 0;">Prof. Andy 🟢</h2>
+  <h2 style="margin: 0;">Prof. Dennisse 🔴</h2>
+</div>
   <div id="calendar"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- basic -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- mobile metas -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <!-- site metas -->
+        <title>DIyE</title>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- bootstrap css -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!-- sty    le css -->
+        <link rel="stylesheet" href="css/style.css">
+        <!-- Responsive-->
+        <link rel="stylesheet" href="css/responsive.css">
+        <!-- fevicon -->
+        <link rel="icon" href="images/fevicon.png" type="image/gif" />
+        <!-- Scrollbar Custom CSS -->
+        <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+        <!-- Tweaks for older IEs-->
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Horarios de Reuniones</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </head>
+<body>
+    <header>
+        <!-- header inner -->
+        <div  class="head_top">
+           <div class="header">
+              <div class="container-fluid">
+                 <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                       <div class="full">
+                          <div class="center-desk">
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <!-- end header inner -->
+           <!-- end header -->
+    <!-- banner -->
+    <section class="banner_main">
+        <div class="container-fluid">
+           <div class="row d_flex">
+              <div class="col-md-6">
+                 <div class="text-bg">
+                    <h1>INCUBA ANDINA LAB</h1>
+                    <p>Dirección de Innovación y Emprendimieto</p>
+                    <a href="https://sites.google.com/uandina.edu.pe/incubalab">Conocenos</a>
+                 </div>
+              </div>
+              <div class="col-md-6">
+                 <div class="text-img">
+                    <figure><img src="images/incuba.png " alt="#"/></figure>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </section>
+    </div>
+    </header> 
+
+        <div id="result" class="row justify-content-center mt-3"></div>
+    </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async function () {
       const calendarEl = document.getElementById('calendar');
@@ -104,8 +184,18 @@
       calendar.render();
     });
   </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <footer class="footer">
+        <div class="container text-center">
+            <p 
+                class="text-muted">Dirección de Innovación y Emprendimiento
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
