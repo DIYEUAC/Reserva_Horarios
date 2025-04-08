@@ -51,9 +51,14 @@ footer {
   padding: 2px;
 }
 
-/* Estilo para slots vacíos */
-.fc-timegrid-slot.fc-timegrid-slot-lane {
-  background-color: #eaeaea;
+/* Fondo gris para todas las franjas horarias */
+.fc-timegrid-slot {
+  background-color: #eaeaea !important;
+}
+
+/* Pero eventos deben sobresalir */
+.fc-event {
+  z-index: 10;
 }
 
 /* Opcional: estilo para eventos ocupados (si los agregas en el futuro) */
