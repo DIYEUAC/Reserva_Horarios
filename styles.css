@@ -1,69 +1,44 @@
-/* Colores institucionales */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f8f9fa;
-  color: #002060; /* Azul UAC */
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  background-color: #002060; /* Azul UAC */
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f6fc;
+      color: #003366;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .fc .fc-toolbar-title {
+      color: #003366;
+    }
+    .fc-button-primary {
+      background-color: #6A1B9A;
+      border-color: #6A1B9A;
+    }
+    .fc-button-primary:hover {
+      background-color: #00AEEF;
+      border-color: #00AEEF;
+    }
+    footer {
+  background-color: #003366;
   color: white;
-  padding: 1rem;
   text-align: center;
-}
-
-footer {
-  background-color: #cfe2f3; /* Celeste Incuba */
-  color: #1f1f1f;
-  text-align: center;
-  padding: 0.5rem;
+  padding: 15px 10px;
   font-size: 0.9rem;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  border-top: 2px solid #6a329f; /* Violeta Incuba */
-}
-
-#calendar {
-  max-width: 90%;
-  margin: 2rem auto;
-}
-
-/* Ajuste de celdas */
-.fc .fc-timegrid-slot {
-  min-height: 2em !important;
-  height: auto !important;
-  white-space: normal !important;
-}
-
-/* Texto dentro de eventos */
-.fc-event-title, .fc-event-time {
-  white-space: normal !important;
-  overflow-wrap: break-word;
-  font-size: 0.85rem;
-}
-
-/* Estilo para eventos disponibles */
-.fc-event {
-  border-radius: 8px;
-  padding: 2px;
-}
-
-/* Fondo gris para todas las franjas horarias */
-.fc-timegrid-slot {
-  background-color: #eaeaea !important;
-}
-
-/* Pero eventos deben sobresalir */
-.fc-event {
-  z-index: 10;
-}
-
-/* Opcional: estilo para eventos ocupados (si los agregas en el futuro) */
-.fc-event[data-estado="Ocupado"] {
-  background-color: #cccccc !important;
-  color: #666 !important;
-  pointer-events: none;
+  margin-top: 40px;
 }
