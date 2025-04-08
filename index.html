@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Horario de Reuniones</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    #calendar { max-width: 900px; margin: auto; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Horario de Reuniones - Prof. Andy</h2>
+  <div id="calendar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        slotMinTime: '08:00:00',
+        slotMaxTime: '15:30:00',
+        locale: 'es',
+        allDaySlot: false,
+        events: 'andy_eventos.json', // <-- este JSON debe estar en la misma carpeta
+        eventClick: function (info) {
+          if (info.event.extendedProps.estado === "Disponible") {
+            const confirmar = confirm(`¿Deseas registrarte en el espacio de ${info.event.extendedProps.docente}?\n${info.event.start.toLocaleString()}`);
+            if (confirmar) {
+              // Aquí podrías redirigir a un formulario de registro (Google Form, etc)
+              alert("¡Registro simulado! (Aquí iría tu formulario)");
+            }
+          } else {
+            alert("Este espacio ya está ocupado.");
+          }
+        }
+      });
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
