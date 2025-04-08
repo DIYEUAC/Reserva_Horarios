@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Horario de Reuniones</title>
+  <title>Horarios de Reuniones</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <style>
     body { font-family: sans-serif; margin: 20px; }
@@ -10,32 +10,45 @@
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">Horario de Reuniones - Prof. Andy</h2>
+  <h2 style="text-align:center;">Horarios de Reuniones: Prof. Andy 🟢 y Prof. Dennisse 🌸</h2>
   <div id="calendar"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
       const calendarEl = document.getElementById('calendar');
+
+      // Cargar los dos archivos JSON
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('andy_eventos.json').then(r => r.json()),
+        fetch('dennisse_eventos.json').then(r => r.json())
+      ]);
+
+      // Asignar color por docente
+      const eventos = [
+        ...andyEvents.map(ev => ({ ...ev, color: '#28a745' })),       // verde Andy
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#e83e8c' }))    // rosa Dennisse
+      ];
+
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
         allDaySlot: false,
-        events: 'andy_eventos.json', // <-- este JSON debe estar en la misma carpeta
+        events: eventos,
         eventClick: function (info) {
           if (info.event.extendedProps.estado === "Disponible") {
-            const confirmar = confirm(`¿Deseas registrarte en el espacio de ${info.event.extendedProps.docente}?\n${info.event.start.toLocaleString()}`);
+            const confirmar = confirm(`¿Deseas registrarte con el/la prof. ${info.event.extendedProps.docente}?\nHorario: ${info.event.start.toLocaleString()}`);
             if (confirmar) {
-              // Aquí podrías redirigir a un formulario de registro (Google Form, etc)
-              alert("¡Registro simulado! (Aquí iría tu formulario)");
+              alert("Aquí se abriría un formulario de registro 📝");
             }
           } else {
             alert("Este espacio ya está ocupado.");
           }
         }
       });
+
       calendar.render();
     });
   </script>
