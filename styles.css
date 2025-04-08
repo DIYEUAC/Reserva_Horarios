@@ -1,73 +1,64 @@
-/* Colores Institucionales */
-:root {
-  --azul-uac: #003366; /* Azul Universidad Andina del Cusco */
-  --celeste-incuba: #66ccff; /* Celeste Incuba Andina Lab */
-  --violeta-incuba: #800080; /* Violeta Incuba Andina Lab */
-  --azul-incuba: #0000ff; /* Azul Incuba Andina Lab */
-}
-
-/* Estilos Generales */
+/* Colores institucionales */
 body {
-  font-family: Arial, sans-serif;
-  background-color: var(--celeste-incuba);
-  color: var(--azul-uac);
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+  color: #002060; /* Azul UAC */
   margin: 0;
   padding: 0;
 }
 
-/* Encabezado */
 header {
-  background-color: var(--azul-uac);
-  color: #ffffff;
-  padding: 20px;
+  background-color: #002060; /* Azul UAC */
+  color: white;
+  padding: 1rem;
   text-align: center;
 }
 
-/* Navegación */
-nav {
-  background-color: var(--celeste-incuba);
-  overflow: hidden;
-}
-
-nav a {
-  float: left;
-  display: block;
-  color: var(--azul-uac);
-  padding: 14px 20px;
-  text-decoration: none;
-  text-align: center;
-}
-
-nav a:hover {
-  background-color: var(--azul-uac);
-  color: #ffffff;
-}
-
-/* Secciones */
-section {
-  padding: 20px;
-}
-
-/* Botones */
-button {
-  background-color: var(--violeta-incuba);
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: var(--azul-incuba);
-}
-
-/* Pie de Página */
 footer {
-  background-color: var(--azul-uac);
-  color: #ffffff;
+  background-color: #cfe2f3; /* Celeste Incuba */
+  color: #1f1f1f;
   text-align: center;
-  padding: 10px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
   position: fixed;
   bottom: 0;
   width: 100%;
+  border-top: 2px solid #6a329f; /* Violeta Incuba */
+}
+
+#calendar {
+  max-width: 90%;
+  margin: 2rem auto;
+}
+
+/* Ajuste de celdas */
+.fc .fc-timegrid-slot {
+  min-height: 2em !important;
+  height: auto !important;
+  white-space: normal !important;
+}
+
+/* Texto dentro de eventos */
+.fc-event-title, .fc-event-time {
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  font-size: 0.85rem;
+}
+
+/* Estilo para eventos disponibles */
+.fc-event {
+  border-radius: 8px;
+  padding: 2px;
+}
+
+/* Estilo para slots vacíos */
+.fc-timegrid-slot.fc-timegrid-slot-lane {
+  background-color: #eaeaea;
+}
+
+/* Opcional: estilo para eventos ocupados (si los agregas en el futuro) */
+.fc-event[data-estado="Ocupado"] {
+  background-color: #cccccc !important;
+  color: #666 !important;
+  pointer-events: none;
 }
