@@ -2,19 +2,56 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Horarios de Reuniones</title>
+  <title>Reuniones Incuba Andina Lab - UAC</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; margin: 20px; }
-    #calendar { max-width: 900px; margin: auto; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f6fc;
+      color: #003366;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .fc .fc-toolbar-title {
+      color: #003366;
+    }
+    .fc-button-primary {
+      background-color: #6A1B9A;
+      border-color: #6A1B9A;
+    }
+    .fc-button-primary:hover {
+      background-color: #00AEEF;
+      border-color: #00AEEF;
+    }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center;">Horarios de Reuniones</h1>
+  <header>
     <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
-  <h2 style="margin: 0;">Prof. Andy 🟢</h2>
-  <h2 style="margin: 0;">Prof. Dennisse 🔴</h2>
+    <h1>Reuniones con Docentes - Incuba Andina Lab</h1>
+    <h2 style="margin: 0;">Prof. Andy 🟢</h2>
+    <h2 style="margin: 0;">Prof. Dennisse 🔴</h2>
 </div>
+  </header>
+
   <div id="calendar"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
@@ -22,16 +59,14 @@
     document.addEventListener('DOMContentLoaded', async function () {
       const calendarEl = document.getElementById('calendar');
 
-      // Cargar los dos archivos JSON
       const [andyEvents, dennisseEvents] = await Promise.all([
         fetch('andy_eventos.json').then(r => r.json()),
         fetch('dennisse_eventos.json').then(r => r.json())
       ]);
 
-      // Asignar color por docente
       const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#28a745' })),       // verde Andy
-        ...dennisseEvents.map(ev => ({ ...ev, color: '#e83e8c' }))    // rosa Dennisse
+        ...andyEvents.map(ev => ({ ...ev, color: '#00AEEF' })),    // celeste para Andy
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#6A1B9A' })) // violeta para Dennisse
       ];
 
       const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -40,10 +75,11 @@
         slotMaxTime: '15:30:00',
         locale: 'es',
         allDaySlot: false,
+        nowIndicator: true,
         events: eventos,
         eventClick: function (info) {
           if (info.event.extendedProps.estado === "Disponible") {
-            const confirmar = confirm(¿Deseas registrarte con el/la prof. ${info.event.extendedProps.docente}?\nHorario: ${info.event.start.toLocaleString()});
+            const confirmar = confirm(`¿Deseas registrarte con el/la prof. ${info.event.extendedProps.docente}?\nHorario: ${info.event.start.toLocaleString()}`);
             if (confirmar) {
               alert("Aquí se abriría un formulario de registro 📝");
             }
