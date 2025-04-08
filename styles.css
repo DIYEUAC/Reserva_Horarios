@@ -1,0 +1,73 @@
+/* Colores Institucionales */
+:root {
+  --azul-uac: #003366; /* Azul Universidad Andina del Cusco */
+  --celeste-incuba: #66ccff; /* Celeste Incuba Andina Lab */
+  --violeta-incuba: #800080; /* Violeta Incuba Andina Lab */
+  --azul-incuba: #0000ff; /* Azul Incuba Andina Lab */
+}
+
+/* Estilos Generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--celeste-incuba);
+  color: var(--azul-uac);
+  margin: 0;
+  padding: 0;
+}
+
+/* Encabezado */
+header {
+  background-color: var(--azul-uac);
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Navegación */
+nav {
+  background-color: var(--celeste-incuba);
+  overflow: hidden;
+}
+
+nav a {
+  float: left;
+  display: block;
+  color: var(--azul-uac);
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+}
+
+nav a:hover {
+  background-color: var(--azul-uac);
+  color: #ffffff;
+}
+
+/* Secciones */
+section {
+  padding: 20px;
+}
+
+/* Botones */
+button {
+  background-color: var(--violeta-incuba);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--azul-incuba);
+}
+
+/* Pie de Página */
+footer {
+  background-color: var(--azul-uac);
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
