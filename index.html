@@ -29,9 +29,18 @@
 
       // Asignar color por docente
       const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#28a745' })),       // verde Andy
-        ...dennisseEvents.map(ev => ({ ...ev, color: '#e83e8c' }))    // rosa Dennisse
-      ];
+  ...andyEvents.map(ev => ({ 
+    ...ev, 
+    color: ev.extendedProps.estado === "Disponible" ? '#28a745' : '#999',
+    classNames: [ev.extendedProps.estado === "Disponible" ? 'disponible' : 'ocupado'],
+  })),
+  ...dennisseEvents.map(ev => ({
+    ...ev,
+    color: ev.extendedProps.estado === "Disponible" ? '#e83e8c' : '#999',
+    classNames: [ev.extendedProps.estado === "Disponible" ? 'disponible' : 'ocupado'],
+  }))
+];
+
 
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
