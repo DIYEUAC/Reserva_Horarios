@@ -32,11 +32,6 @@ body {
   position: relative;  /* Necesario para que el logo quede fuera pero centrado */
 }
 
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 40px;
-  line-height: 1.3;
-}
 h2 {
   font-size: 2.2rem;
   margin-bottom: 0;
