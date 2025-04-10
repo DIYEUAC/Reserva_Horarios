@@ -43,56 +43,78 @@
         nowIndicator: true,
         events: eventos,
         eventClick: function (info) {
-  if (info.event.extendedProps.estado === "Disponible") {
-    Swal.fire({
-      title: `Reserva con ${info.event.extendedProps.docente}`,
-      html: `
-        <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}<br>
-        <strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-        <input type="text" id="nombre" class="swal2-input" placeholder="Tu nombre">
-        <input type="email" id="correo" class="swal2-input" placeholder="Tu correo UAC">
-      `,
-      confirmButtonText: 'Reservar',
-      showCancelButton: true,
-      preConfirm: () => {
-        const nombre = document.getElementById('nombre').value;
-        const correo = document.getElementById('correo').value;
-        if (!nombre || !correo) {
-          Swal.showValidationMessage('Por favor, completa todos los campos');
-        }
-        return { nombre, correo };
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const { nombre, correo } = result.value;
-
-        // Aquí puedes enviar los datos a un backend, Google Forms, Google Sheets, etc.
-        console.log('Datos registrados:', nombre, correo);
-
-        Swal.fire({
-          icon: 'success',
-          title: '¡Registro exitoso!',
-          text: `${nombre}, has reservado tu cita correctamente.`,
-          confirmButtonColor: '#003366'
-        });
-
-        // Opcional: marcar como ocupado visualmente
-        info.event.setProp('title', `${nombre}`);
-        info.event.setExtendedProp('estado', 'Ocupado');
-        info.event.setProp('color', '#adb5bd'); // gris
-      }
-    });
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Espacio no disponible',
-      text: 'Este horario ya fue reservado.',
-      confirmButtonColor: '#6A1B9A'
-    });
-  }
-}
+          if (info.event.extendedProps.estado === "Disponible") {
+            Swal.fire({
+              title: `Reserva con ${info.event.extendedProps.docente}`,
+              html: `
+                <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}<br>
+                <strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                <input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">
+                <input type="email" id="correo" class="swal2-input" placeholder="Correo UAC">
+                <input type="tel" id="numero" class="swal2-input" placeholder="Número de celular">
+              `,
+              confirmButtonText: 'Reservar',
+              showCancelButton: true,
+              preConfirm: () => {
+                const nombre = document.getElementById('nombre').value;
+                const correo = document.getElementById('correo').value;
+                const numero = document.getElementById('numero').value;
+                if (!nombre || !correo || !numero) {
+                  Swal.showValidationMessage('Por favor, completa todos los campos');
+                }
+                return { nombre, correo, numero };
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                const { nombre, correo, numero } = result.value;
+        
+                fetch("https://script.google.com/a/macros/uandina.edu.pe/s/AKfycbzgbeVzGTzOpncMtB2sJRyoIIjt1g144TkFDz2qdQEGTExTHtm96jZx7yREspQ5SVwP/exec", {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    docente: info.event.extendedProps.docente,
+                    fecha: info.event.start.toLocaleDateString(),
+                    hora: info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    nombre,
+                    correo,
+                    numero
+                  }),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.status === 'success') {
+                    Swal.fire({
+                      icon: 'success',
+                      title: '¡Registro exitoso!',
+                      text: `${nombre}, tu cita fue registrada correctamente.`,
+                      confirmButtonColor: '#003366'
+                    });
+        
+                    info.event.setProp('title', `${nombre}`);
+                    info.event.setExtendedProp('estado', 'Ocupado');
+                    info.event.setProp('color', '#adb5bd');
+                  } else {
+                    Swal.fire('Error', 'No se pudo registrar. Intenta nuevamente.', 'error');
+                  }
+                })
+                .catch(err => {
+                  console.error(err);
+                  Swal.fire('Error', 'Ocurrió un error al registrar.', 'error');
+                });
+              }
+            });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Espacio ocupado',
+                text: 'Este horario ya está reservado.',
+                confirmButtonColor: '#6A1B9A'
+              });
+            }
+          }
       });
-
       calendar.render();
     });
   </script>
