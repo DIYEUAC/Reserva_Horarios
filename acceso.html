@@ -70,7 +70,7 @@
         }
       } else {
         // Si no está autenticado, redirigir al login
-        window.location.href = "index.html";
+        Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado como docente o participante.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
       }
     });
   </script>
