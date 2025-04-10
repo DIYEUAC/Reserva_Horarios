@@ -51,3 +51,12 @@ h1 {
   width: 20px;
   height: 20px;
 }
+#logo {
+  width: 30px; /* Tamaño pequeño del logo */
+  height: 30px;
+}
+
+#GoogleIcon {
+  width: 30px;
+  height: 30px;
+}
