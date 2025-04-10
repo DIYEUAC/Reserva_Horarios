@@ -42,7 +42,7 @@
         localStorage.setItem('userEmail', user.email); // guardar email para verificar permisos después
 
         await Swal.fire(`Bienvenido, ${user.displayName}`, '', 'success');
-        window.location.href = "calendario.html";
+        window.location.href = "acceso.html";
       } catch (error) {
         console.error("Error en login:", error);
         Swal.fire('Error al iniciar sesión', error.message, 'error');
