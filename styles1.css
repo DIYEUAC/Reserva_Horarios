@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #4e54c8, #8f94fb); /* violeta a celeste institucional */
+  background: linear-gradient(to right, #4e54c8, #8f94fb); /* Violeta a celeste institucional */
   color: white;
   text-align: center;
   margin: 0;
@@ -9,14 +9,27 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  flex-direction: column;
+}
+
+#logo {
+  width: 15vw;  /* Tamaño proporcional al ancho de la pantalla */
+  height: auto;
+  position: absolute;  /* Posiciona el logo fuera del contenedor */
+  top: 10%;  /* 10% desde la parte superior de la pantalla */
+  z-index: 10;  /* Asegura que el logo esté encima de otros elementos */
 }
 
 #app {
   background-color: rgba(255, 255, 255, 0.05);
   padding: 40px 30px;
   border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px); /* Efecto de desenfoque de fondo */
+  width: 100%;
+  max-width: 400px; /* Limita el tamaño máximo del contenedor */
+  text-align: center;
+  position: relative;  /* Necesario para que el logo quede fuera pero centrado */
 }
 
 h1 {
@@ -38,7 +51,7 @@ h1 {
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -50,10 +63,6 @@ h1 {
 #loginBtn img {
   width: 20px;
   height: 20px;
-}
-#logo {
-  width: 110px; /* Tamaño pequeño del logo */
-  height: 80px;
 }
 
 #GoogleIcon {
