@@ -10,20 +10,32 @@
 <body>
   <div id="app">
     <h1>Bienvenido a <br>Incuba Andina Lab</h1>
-    <button id="loginBtn">Iniciar sesión con Google</button>
+
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Correo institucional" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <p style="margin-top: 20px;">o</p>
+    <button id="googleLoginBtn">Ingresar con Google</button>
   </div>
 
-  <!-- Firebase y autenticación -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
-      //authDomain: "reservas-incuba.firebaseapp.com",
-      authDomain: "uandina.edu.pe",
+      authDomain: "reservas-incuba.firebaseapp.com",
       projectId: "reservas-incuba",
-      storageBucket: "reservas-incuba.appspot.com",  // corregido ".app" -> ".appspot.com"
+      storageBucket: "reservas-incuba.appspot.com",
       messagingSenderId: "321837960358",
       appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
       measurementId: "G-ERQ0CQWYWG"
@@ -32,15 +44,45 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const loginBtn = document.getElementById('loginBtn');
-    loginBtn.addEventListener('click', async () => {
+    const loginForm = document.getElementById('loginForm');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+
+    // Login con correo y contraseña
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email.endsWith('@uandina.edu.pe')) {
+        Swal.fire('Acceso restringido', 'Solo se permite acceso con correos institucionales @uandina.edu.pe', 'error');
+        return;
+      }
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        localStorage.setItem('userEmail', user.email);
+        await Swal.fire(`Bienvenido, ${user.email}`, '', 'success');
+        window.location.href = "acceso.html";
+      } catch (error) {
+        Swal.fire('Error al iniciar sesión', error.message, 'error');
+      }
+    });
+
+    // Login con Google
+    googleLoginBtn.addEventListener('click', async () => {
       const provider = new GoogleAuthProvider();
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        localStorage.setItem('userEmail', user.email); // guardar email para verificar permisos después
+        if (!user.email.endsWith('@uandina.edu.pe')) {
+          await Swal.fire('Acceso restringido', 'Solo se permite acceso con correos institucionales @uandina.edu.pe', 'error');
+          await signOut(auth);
+          return;
+        }
 
+        localStorage.setItem('userEmail', user.email);
         await Swal.fire(`Bienvenido, ${user.displayName}`, '', 'success');
         window.location.href = "acceso.html";
       } catch (error) {
