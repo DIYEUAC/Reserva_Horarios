@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="styles.css">
   <title>Reuniones Incuba Andina Lab</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 </head>
 <body>
@@ -41,15 +43,54 @@
         nowIndicator: true,
         events: eventos,
         eventClick: function (info) {
-          if (info.event.extendedProps.estado === "Disponible") {
-            const confirmar = confirm(`¿Deseas registrarte con el/la prof. ${info.event.extendedProps.docente}?\nHorario: ${info.event.start.toLocaleString()}`);
-            if (confirmar) {
-              alert("Aquí se abriría un formulario de registro 📝");
-            }
-          } else {
-            alert("Este espacio ya está ocupado.");
-          }
+  if (info.event.extendedProps.estado === "Disponible") {
+    Swal.fire({
+      title: `Reserva con ${info.event.extendedProps.docente}`,
+      html: `
+        <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}<br>
+        <strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+        <input type="text" id="nombre" class="swal2-input" placeholder="Tu nombre">
+        <input type="email" id="correo" class="swal2-input" placeholder="Tu correo UAC">
+      `,
+      confirmButtonText: 'Reservar',
+      showCancelButton: true,
+      preConfirm: () => {
+        const nombre = document.getElementById('nombre').value;
+        const correo = document.getElementById('correo').value;
+        if (!nombre || !correo) {
+          Swal.showValidationMessage('Por favor, completa todos los campos');
         }
+        return { nombre, correo };
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const { nombre, correo } = result.value;
+
+        // Aquí puedes enviar los datos a un backend, Google Forms, Google Sheets, etc.
+        console.log('Datos registrados:', nombre, correo);
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro exitoso!',
+          text: `${nombre}, has reservado tu cita correctamente.`,
+          confirmButtonColor: '#003366'
+        });
+
+        // Opcional: marcar como ocupado visualmente
+        info.event.setProp('title', `${nombre}`);
+        info.event.setExtendedProp('estado', 'Ocupado');
+        info.event.setProp('color', '#adb5bd'); // gris
+      }
+    });
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Espacio no disponible',
+      text: 'Este horario ya fue reservado.',
+      confirmButtonColor: '#6A1B9A'
+    });
+  }
+}
       });
 
       calendar.render();
