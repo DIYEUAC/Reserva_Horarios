@@ -64,10 +64,9 @@
             // Redirigir a la página de registro de horarios para participantes
             window.location.href = "main_participantes.html"; // Página para registrar horarios
           }
-        } else {
+        } else { 
           // Si el correo no está registrado, redirigir al login
-           await Swal.fire('¡Error!', 'Este correo no está registrado como docente o participante.', 'error');
-          } else { Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado como docente o participante.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
+          Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado como docente o participante.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
         }
       } else {
         // Si no está autenticado, redirigir al login
