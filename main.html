@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+  <title>Reuniones Incuba Andina Lab</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>Reuniones con Docentes - Incuba Andina Lab | UAC</h1>
+    <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
+  <h2 style="margin: 0;">Prof. Andy 🟢</h2>
+  <h2 style="margin: 0;">Prof. Dennisse 🔴</h2>
+</div>
+  </header>
+
+  <div id="calendar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const calendarEl = document.getElementById('calendar');
+
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('andy_eventos.json').then(r => r.json()),
+        fetch('dennisse_eventos.json').then(r => r.json())
+      ]);
+
+      const eventos = [
+        ...andyEvents.map(ev => ({ ...ev, color: '#00AEEF' })),    // celeste para Andy
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#6A1B9A' })) // violeta para Dennisse
+      ];
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        slotMinTime: '08:00:00',
+        slotMaxTime: '15:30:00',
+        locale: 'es',
+        allDaySlot: false,
+        nowIndicator: true,
+        events: eventos,
+        eventClick: function (info) {
+          if (info.event.extendedProps.estado === "Disponible") {
+            Swal.fire({
+              title: `Reserva con ${info.event.extendedProps.docente}`,
+              html: `
+                <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}<br>
+                <strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                <input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">
+                <input type="email" id="correo" class="swal2-input" placeholder="Correo UAC">
+                <input type="tel" id="numero" class="swal2-input" placeholder="Número de celular">
+              `,
+              confirmButtonText: 'Reservar',
+              showCancelButton: true,
+              preConfirm: () => {
+                const nombre = document.getElementById('nombre').value;
+                const correo = document.getElementById('correo').value;
+                const numero = document.getElementById('numero').value;
+                if (!nombre || !correo || !numero) {
+                  Swal.showValidationMessage('Por favor, completa todos los campos');
+                }
+                return { nombre, correo, numero };
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                const { nombre, correo, numero } = result.value;
+        
+                fetch("https://script.google.com/a/macros/uandina.edu.pe/s/AKfycbzgbeVzGTzOpncMtB2sJRyoIIjt1g144TkFDz2qdQEGTExTHtm96jZx7yREspQ5SVwP/exec", {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    docente: info.event.extendedProps.docente,
+                    fecha: info.event.start.toLocaleDateString(),
+                    hora: info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    nombre,
+                    correo,
+                    numero
+                  }),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.status === 'success') {
+                    Swal.fire({
+                      icon: 'success',
+                      title: '¡Registro exitoso!',
+                      text: `${nombre}, tu cita fue registrada correctamente.`,
+                      confirmButtonColor: '#003366'
+                    });
+        
+                    info.event.setProp('title', `${nombre}`);
+                    info.event.setExtendedProp('estado', 'Ocupado');
+                    info.event.setProp('color', '#adb5bd');
+                  } else {
+                    Swal.fire('Error', 'No se pudo registrar. Intenta nuevamente.', 'error');
+                  }
+                })
+                .catch(err => {
+                  console.error(err);
+                  Swal.fire('Error', 'Ocurrió un error al registrar.', 'error');
+                });
+              }
+            });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Espacio ocupado',
+                text: 'Este horario ya está reservado.',
+                confirmButtonColor: '#6A1B9A'
+              });
+            }
+          }
+      });
+      calendar.render();
+    });
+  </script>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
+    authDomain: "reservas-incuba.firebaseapp.com",
+    projectId: "reservas-incuba",
+    storageBucket: "reservas-incuba.firebasestorage.app",
+    messagingSenderId: "321837960358",
+    appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
+    measurementId: "G-ERQ0CQWYWG"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+</body>
+  <footer>
+  <p>© 2025 Incuba Andina Lab - Universidad Andina del Cusco. Todos los derechos reservados.</p>
+</footer>
+</html>

@@ -1,0 +1,14 @@
+const admins = ['andy@uac.edu.pe', 'dennisse@uac.edu.pe']; // puedes poner sus correos aquí
+
+const userEmail = localStorage.getItem('userEmail');
+
+if (!userEmail) {
+  alert("No has iniciado sesión");
+  window.location.href = "index.html";
+} else if (admins.includes(userEmail)) {
+  console.log("👩‍🏫 Acceso como ADMINISTRADOR");
+  // permitir editar todo
+} else {
+  console.log("👨‍🎓 Acceso como USUARIO");
+  // permitir solo registrar y editar sus reservas
+}
