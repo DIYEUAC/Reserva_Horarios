@@ -1,14 +1,76 @@
-const admins = ['andy@uac.edu.pe', 'dennisse@uac.edu.pe']; // puedes poner sus correos aquí
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Control de Acceso - Incuba Andina Lab</title>
+  <link rel="stylesheet" href="styles1.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>Bienvenido, <span id="userName"></span></h1>
+    <p>Cargando...</p>
+  </div>
 
-const userEmail = localStorage.getItem('userEmail');
+  <script type="module">
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
-if (!userEmail) {
-  alert("No has iniciado sesión");
-  window.location.href = "index.html";
-} else if (admins.includes(userEmail)) {
-  console.log("👩‍🏫 Acceso como ADMINISTRADOR");
-  // permitir editar todo
-} else {
-  console.log("👨‍🎓 Acceso como USUARIO");
-  // permitir solo registrar y editar sus reservas
-}
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
+      authDomain: "uandina.edu.pe",
+      projectId: "reservas-incuba",
+      storageBucket: "reservas-incuba.appspot.com",
+      messagingSenderId: "321837960358",
+      appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
+      measurementId: "G-ERQ0CQWYWG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Lista de usuarios con roles manuales
+    const userRoles = {
+      '018201307H@uandina.edu.pe': 'docente', // Usuario docente
+      'rhumpire@uandina.edu.pe': 'docente', // Otro usuario docente
+      'davilad@uandina.edu.pe': 'docente', // Otro usuario docente
+      'participante@uandina.edu.pe': 'participante', // Usuario participante
+      'otrodocente@uandina.edu.pe': 'participante', // Otro usuario docente
+      // Agrega más usuarios aquí
+    };
+
+    // Verificar el estado de autenticación
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        // Mostrar nombre del usuario en la página
+        document.getElementById('userName').textContent = user.displayName;
+
+        // Obtener el correo electrónico del usuario
+        const userEmail = user.email;
+
+        // Verificar si el correo está en la lista de roles
+        if (userRoles[userEmail]) {
+          const userRole = userRoles[userEmail];
+
+          // Redirigir según el rol
+          if (userRole === 'docente') {
+            // Redirigir a la página de administración de horarios para docentes
+            window.location.href = "admin_horarios.html"; // Página para administrar horarios
+          } else if (userRole === 'participante') {
+            // Redirigir a la página de registro de horarios para participantes
+            window.location.href = "calendario.html"; // Página para registrar horarios
+          }
+        } else {
+          // Si el correo no está registrado, redirigir al login
+          alert("Este correo no está registrado como docente o participante.");
+          window.location.href = "index.html"; // Redirigir al login si no está registrado
+        }
+      } else {
+        // Si no está autenticado, redirigir al login
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
