@@ -32,7 +32,7 @@
 
     // Lista de usuarios con roles manuales
     const userRoles = {
-      '018201307h@uandina.edu.pe': 'participante', // Usuario docente
+      '018201307h@uandina.edu.pe': 'docente', // Usuario docente
       'rhumpire@uandina.edu.pe': 'docente', // Otro usuario docente
       'davilad@uandina.edu.pe': 'docente', // Otro usuario docente
       'participante@uandina.edu.pe': 'participante', // Usuario participante
@@ -63,7 +63,7 @@
           }
         } else {
           // Si el correo no está registrado, redirigir al login
-           //await Swal.fire('¡Error!', 'Este correo no está registrado como docente o participante.', 'error');
+           await Swal.fire('¡Error!', 'Este correo no está registrado como docente o participante.', 'error');
            window.location.href = "index.html"; // Redirigir al login si no está registrado
         }
       } else {
