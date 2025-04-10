@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reserva de Horarios - Incuba Andina Lab</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #8f94fb;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reserva de Reuniones</h1>
+  </header>
+  <div id="calendar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const calendarEl = document.getElementById('calendar');
+      const userEmail = localStorage.getItem('userEmail'); // Para validación del propietario
+
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('andy_eventos.json').then(r => r.json()),
+        fetch('dennisse_eventos.json').then(r => r.json())
+      ]);
+
+      const eventos = [
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
+      ];
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        slotMinTime: '08:00:00',
+        slotMaxTime: '15:30:00',
+        locale: 'es',
+        allDaySlot: false,
+        nowIndicator: true,
+        events: eventos,
+        eventClick: function (info) {
+          if (info.event.extendedProps.estado === "Disponible") {
+            Swal.fire({
+              title: `Reserva con ${info.event.extendedProps.docente}`,
+              html: `
+                <input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">
+                <input type="email" id="correo" class="swal2-input" placeholder="Correo UAC" value="${userEmail}">
+                <input type="tel" id="numero" class="swal2-input" placeholder="Número de celular">
+              `,
+              confirmButtonText: 'Reservar',
+              showCancelButton: true,
+              preConfirm: () => {
+                const nombre = document.getElementById('nombre').value;
+                const correo = document.getElementById('correo').value;
+                const numero = document.getElementById('numero').value;
+                if (!nombre || !correo || !numero) {
+                  Swal.showValidationMessage('Completa todos los campos');
+                }
+                return { nombre, correo, numero };
+              }
+            }).then(result => {
+              if (result.isConfirmed) {
+                // Enviar a backend...
+                Swal.fire('¡Reservado!', 'Tu reunión fue registrada correctamente.', 'success');
+                info.event.setProp('title', result.value.nombre);
+                info.event.setExtendedProp('estado', 'Ocupado');
+                info.event.setExtendedProp('owner', userEmail);
+                info.event.setProp('color', '#adb5bd');
+              }
+            });
+          } else if (info.event.extendedProps.owner === userEmail) {
+            Swal.fire({
+              title: '¿Eliminar tu reserva?',
+              text: 'Esta acción no se puede deshacer.',
+              showCancelButton: true,
+              confirmButtonText: 'Eliminar',
+              cancelButtonText: 'Cancelar'
+            }).then(result => {
+              if (result.isConfirmed) {
+                info.event.remove();
+                Swal.fire('Eliminado', 'Tu reserva ha sido cancelada.', 'success');
+              }
+            });
+          } else {
+            Swal.fire('No disponible', 'Este horario ya fue reservado.', 'error');
+          }
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
