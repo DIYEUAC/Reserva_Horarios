@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Docente - Incuba Andina Lab</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #4e54c8;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel Docente - Gestión de Horarios</h1>
+  </header>
+  <div id="calendar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const calendarEl = document.getElementById('calendar');
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('andy_eventos.json').then(r => r.json()),
+        fetch('dennisse_eventos.json').then(r => r.json())
+      ]);
+
+      const eventos = [
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
+      ];
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        slotMinTime: '08:00:00',
+        slotMaxTime: '15:30:00',
+        locale: 'es',
+        editable: true, // <-- Docente puede mover eventos
+        eventClick: function (info) {
+          Swal.fire({
+            title: '¿Deseas eliminar este evento?',
+            text: info.event.title,
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar'
+          }).then(result => {
+            if (result.isConfirmed) {
+              info.event.remove(); // Eliminar del calendario visualmente
+              Swal.fire('Eliminado', 'El evento ha sido eliminado.', 'success');
+              // Aquí puedes agregar fetch para eliminar del backend
+            }
+          });
+        },
+        events: eventos
+      });
+
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
