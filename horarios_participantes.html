@@ -117,7 +117,7 @@
           document.getElementById("userName").textContent = user.displayName || user.email;
         } else {
           // Si no hay usuario logeado, redirigir al login
-          window.location.href = "login.html";
+          window.location.href = "index.html";
         }
       });
       
@@ -125,7 +125,7 @@
       
       document.getElementById("logoutBtn").addEventListener("click", () => {
       firebase.auth().signOut().then(() => {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
           }).catch((error) => {
             console.error("Error al cerrar sesión:", error);
             Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
