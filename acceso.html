@@ -67,12 +67,14 @@
         } else { 
           // Si el correo no está registrado, redirigir al login
           alert("Este correo no está registrado como docente o participante.");
+          window.location.href = "index.html"
           //Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado como docente o participante.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
         }
       } else {
         // Si no está autenticado, redirigir al login
         alert("Este correo no está registrado.");
-        Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
+        window.location.href = "index.html"
+        //Swal.fire({ icon: 'error', title: '¡Error!', text: 'Este correo no está registrado.', confirmButtonText: 'Aceptar' }).then(() => window.location.href = "index.html"); }
       }
     });
   </script>
