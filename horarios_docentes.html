@@ -79,5 +79,27 @@
       calendar.render();
     });
   </script>
+  <script type="module">
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
+      authDomain: "reservas-incuba.firebaseapp.com",
+      projectId: "reservas-incuba",
+      storageBucket: "reservas-incuba.appspot.com",
+      messagingSenderId: "321837960358",
+      appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
+      measurementId: "G-ERQ0CQWYWG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        // Mostrar nombre del usuario en la página
+        document.getElementById('userName').textContent = user.displayName;}
+    </script>
 </body>
 </html>
