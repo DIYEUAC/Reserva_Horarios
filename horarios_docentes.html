@@ -13,26 +13,41 @@
     Bienvenido, <span id="userName"></span></h1>
     <button id="logoutBtn">Cerrar sesión</button>
   </header>
+
   <div id="calendar"></div>
 
+  <!-- FullCalendar -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  
+  <!-- Validación de autenticación -->
   <script type="module" src="authCheck.js"></script>
+
+  <!-- Script principal del calendario -->
   <script type="module">
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    document.addEventListener('DOMContentLoaded', async function () {
-      const calendarEl = document.getElementById('calendar');
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = getAuth();
 
+      // Mostrar nombre del usuario
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          document.getElementById("userName").textContent = user.displayName || user.email;
+        }
+      });
+
+      // Cargar eventos desde JSON
       const [andyEvents, dennisseEvents] = await Promise.all([
         fetch('json/andy_eventos.json').then(r => r.json()),
         fetch('json/dennisse_eventos.json').then(r => r.json())
       ]);
 
       const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
-        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),      // Verde para Andy
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))  // Violeta para Dennisse
       ];
 
+      const calendarEl = document.getElementById('calendar');
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         slotMinTime: '08:00:00',
@@ -50,6 +65,7 @@
             if (result.isConfirmed) {
               info.event.remove();
               Swal.fire('Eliminado', 'El evento ha sido eliminado.', 'success');
+              // Aquí podrías agregar lógica para eliminar del backend
             }
           });
         },
@@ -60,7 +76,6 @@
 
       // Cerrar sesión
       document.getElementById("logoutBtn").addEventListener("click", () => {
-        const auth = getAuth();
         signOut(auth).then(() => {
           window.location.href = "index.html";
         }).catch((error) => {
