@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="styles1.css" />
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <!--script src="authCheck.js"></script-->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="authCheck.js"></script>
 </head>
 <body>
   <div id="app">
@@ -67,7 +68,6 @@
         } else { 
           // Si el correo no está registrado, redirigir al login
           //alert("Este correo no está registrado como docente o participante.");
-          //Swal.fire('Este correo no está registrado como docente o participante.', error.message, 'error')
           Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
           window.location.href = "index.html";
           });
@@ -76,7 +76,6 @@
       } else {
         // Si no está autenticado, redirigir al login
         //alert("Este correo no está registrado.");
-        //Swal.fire('Este correo no está registrado.', error.message, 'error')
         Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
         window.location.href = "index.html";
         });
