@@ -18,5 +18,12 @@
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     }
-style="margin-top: 10px; background: white; color: #4e54c8; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;"
- style="margin-top: 10px; background: white; color: #4e54c8; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;"
+#logoutBtn{
+    margin-top: 10px; 
+    background: white; 
+    color: #4e54c8; 
+    padding: 8px 16px; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer;
+}
