@@ -37,9 +37,9 @@
       });
 
       // Cargar eventos desde JSON
-      const [andyEvents, dennisseEvents] = await Promise.all([
-        fetch('json/andy_eventos.json').then(r => r.json()),
-        fetch('json/dennisse_eventos.json').then(r => r.json())
+      const [andyEvents, dennisseEvents] = await Promise.all([ 
+        fetch('json/andy_eventos.json').then(r => r.json()), 
+        fetch('json/dennisse_eventos.json').then(r => r.json()) 
       ]);
 
       const eventos = [
