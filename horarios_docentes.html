@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Panel Docente - Gestión de Horarios</title>
-  <link rel="stylesheet" href="css/styles.css" />
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- 
-  <script src="authCheck.js"></script>
 </head>
 <body>
   <header>
@@ -18,12 +16,16 @@
   <div id="calendar"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
+  <script type="module" src="authCheck.js"></script>
+  <script type="module">
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
     document.addEventListener('DOMContentLoaded', async function () {
       const calendarEl = document.getElementById('calendar');
+
       const [andyEvents, dennisseEvents] = await Promise.all([
-        fetch('andy_eventos.json').then(r => r.json()),
-        fetch('dennisse_eventos.json').then(r => r.json())
+        fetch('json/andy_eventos.json').then(r => r.json()),
+        fetch('json/dennisse_eventos.json').then(r => r.json())
       ]);
 
       const eventos = [
@@ -36,7 +38,7 @@
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        editable: true, // <-- Docente puede mover eventos
+        editable: true,
         eventClick: function (info) {
           Swal.fire({
             title: '¿Deseas eliminar este evento?',
@@ -46,45 +48,26 @@
             cancelButtonText: 'Cancelar'
           }).then(result => {
             if (result.isConfirmed) {
-              info.event.remove(); // Eliminar del calendario visualmente
+              info.event.remove();
               Swal.fire('Eliminado', 'El evento ha sido eliminado.', 'success');
-              // Aquí puedes agregar fetch para eliminar del backend
             }
           });
         },
         events: eventos
       });
-        // Configuración de Firebase (esto lo puedes copiar desde tu consola Firebase)
-        const firebaseConfig = {
-          apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
-          authDomain: "reservas-incuba.firebaseapp.com",
-          projectId: "reservas-incuba",
-          storageBucket: "reservas-incuba.appspot.com",
-          messagingSenderId: "321837960358",
-          appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
-          measurementId: "G-ERQ0CQWYWG"
-        };
-      
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          // Mostrar nombre si está disponible, si no, el correo
-          document.getElementById("userName").textContent = user.displayName;
-        } else {
-          // Si no hay usuario logeado, redirigir al login
-          window.location.href = "index.html";
-        }
-      });
+
       calendar.render();
+
+      // Cerrar sesión
       document.getElementById("logoutBtn").addEventListener("click", () => {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";
-      }).catch((error) => {
-        console.error("Error al cerrar sesión:", error);
-        Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
+        const auth = getAuth();
+        signOut(auth).then(() => {
+          window.location.href = "index.html";
+        }).catch((error) => {
+          console.error("Error al cerrar sesión:", error);
+          Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
+        });
       });
-    });
     });
   </script>
 </body>
