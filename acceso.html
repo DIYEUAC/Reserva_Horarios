@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Control de Acceso - Incuba Andina Lab</title>
   <link rel="stylesheet" href="css/styles1.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!--script src="authCheck.js"></script-->
 </head>
 <body>
   <div id="app">
@@ -17,57 +14,56 @@
   </div>
 
   <script type="module">
-  import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
-    authDomain: "reservas-incuba.firebaseapp.com",
-    projectId: "reservas-incuba",
-    storageBucket: "reservas-incuba.appspot.com",
-    messagingSenderId: "321837960358",
-    appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
-    measurementId: "G-ERQ0CQWYWG"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
+      authDomain: "reservas-incuba.firebaseapp.com",
+      projectId: "reservas-incuba",
+      storageBucket: "reservas-incuba.appspot.com",
+      messagingSenderId: "321837960358",
+      appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
+      measurementId: "G-ERQ0CQWYWG"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-  const userRoles = {
-    '018201307h@uandina.edu.pe': 'docente',
-    'rhumpire@uandina.edu.pe': 'docente',
-    'davilad@uandina.edu.pe': 'docente',
-    'participante@uandina.edu.pe': 'participante',
-    'otrodocente@uandina.edu.pe': 'participante'
-  };
+    const userRoles = {
+      '018201307h@uandina.edu.pe': 'docente',
+      'rhumpire@uandina.edu.pe': 'docente',
+      'davilad@uandina.edu.pe': 'docente',
+      'participante@uandina.edu.pe': 'participante',
+      'otrodocente@uandina.edu.pe': 'participante'
+    };
 
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      const userEmail = user.email;
-      document.getElementById('userName').textContent = user.displayName || userEmail;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userEmail = user.email;
+        document.getElementById('userName').textContent = user.displayName || userEmail;
 
-      if (userRoles[userEmail]) {
-        const userRole = userRoles[userEmail];
+        if (userRoles[userEmail]) {
+          const userRole = userRoles[userEmail];
+          localStorage.setItem('tipoUsuario', userRole);
 
-        // Guardar tipo de usuario para authCheck.js
-        localStorage.setItem('tipoUsuario', userRole);
-
-        if (userRole === 'docente') {
-          window.location.href = "horarios_docentes.html";
-        } else if (userRole === 'participante') {
-          window.location.href = "horarios_participantes.html";
+          if (userRole === 'docente') {
+            window.location.href = "horarios_docentes.html";
+          } else if (userRole === 'participante') {
+            window.location.href = "horarios_participantes.html";
+          }
+        } else {
+          Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
+            window.location.href = "index.html";
+          });
         }
       } else {
-        Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
+        Swal.fire('Debes iniciar sesión.', '', 'warning').then(() => {
           window.location.href = "index.html";
         });
       }
-    } else {
-      Swal.fire('Debes iniciar sesión.', '', 'warning').then(() => {
-        window.location.href = "index.html";
-      });
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
+``
