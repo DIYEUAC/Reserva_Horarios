@@ -45,7 +45,7 @@
 
         if (userRoles[userEmail]) {
           const userRole = userRoles[userEmail];
-          localStorage.setItem('tipoUsuario', userRole);
+          localStorage.setItem('tipoUsuario', userRole);  // Guarda el tipo de usuario
 
           if (userRole === 'docente') {
             window.location.href = "horarios_docentes.html";
@@ -63,7 +63,6 @@
         });
       }
     });
-</script>
+  </script>
 </body>
 </html>
-``
