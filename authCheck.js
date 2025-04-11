@@ -25,11 +25,11 @@ onAuthStateChanged(auth, (user) => {
         confirmButtonColor: '#003366',
         confirmButtonText: 'Volver al inicio'
       }).then(() => {
-        window.location.href = "index.html";
+        //window.location.href = "index.html";
       });
     } else {
       alert(mensaje);
-      window.location.href = "index.html";
+      //window.location.href = "index.html";
     }
   };
 
