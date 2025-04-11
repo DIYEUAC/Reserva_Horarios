@@ -101,7 +101,7 @@
       calendar.render();
       document.getElementById("logoutBtn").addEventListener("click", () => {
       firebase.auth().signOut().then(() => {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       }).catch((error) => {
         console.error("Error al cerrar sesión:", error);
         Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
