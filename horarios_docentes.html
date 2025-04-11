@@ -76,14 +76,27 @@
         },
         events: eventos
       });
+        // Configuración de Firebase (esto lo puedes copiar desde tu consola Firebase)
+        const firebaseConfig = {
+          apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
+          authDomain: "reservas-incuba.firebaseapp.com",
+          projectId: "reservas-incuba",
+          storageBucket: "reservas-incuba.appspot.com",
+          messagingSenderId: "321837960358",
+          appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
+          measurementId: "G-ERQ0CQWYWG"
+        };
+      
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
       firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // Mostrar nombre si está disponible, si no, el correo
-        document.getElementById("userName").textContent = user.displayName;
-      } else {
-        // Si no hay usuario logeado, redirigir al login
-        window.location.href = "login.html";
-      }
+        if (user) {
+          // Mostrar nombre si está disponible, si no, el correo
+          document.getElementById("userName").textContent = user.displayName;
+        } else {
+          // Si no hay usuario logeado, redirigir al login
+          window.location.href = "login.html";
+        }
       });
       calendar.render();
       document.getElementById("logoutBtn").addEventListener("click", () => {
