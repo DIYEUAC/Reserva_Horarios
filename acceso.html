@@ -96,7 +96,7 @@
       const userEmail = user.email;
       console.log("Usuario autenticado:", userEmail);
 
-      document.getElementById('userName').textContent = user.displayName || userEmail;
+      document.getElementById('userName').textContent = user.displayName;
 
       if (userRoles[userEmail]) {
         const userRole = userRoles[userEmail];
@@ -114,13 +114,13 @@
       } else {
         console.log("Correo no registrado:", userEmail);
         Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
-          window.location.href = "index.html";
+         // window.location.href = "index.html";
         });
       }
     } else {
       console.log("No hay usuario autenticado");
       Swal.fire('Debes iniciar sesión.', '', 'warning').then(() => {
-        window.location.href = "index.html";
+       // window.location.href = "index.html";
       });
     }
   });
