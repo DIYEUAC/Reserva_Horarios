@@ -20,12 +20,12 @@ firebase.auth().onAuthStateChanged(user => {
     const path = window.location.pathname;
 
     // Protege main_docente.html
-    if (path.includes("main_docente.html") && tipo !== "docente") {
+    if (path.includes("horarios_docentes.html") && tipo !== "docente") {
       window.location.href = "index.html";
     }
 
     // Protege main_participante.html
-    if (path.includes("main_participante.html") && tipo !== "participante") {
+    if (path.includes("horarios_participantes.html") && tipo !== "participante") {
       window.location.href = "index.html";
     }
 
