@@ -1,73 +1,28 @@
-/* Colores Institucionales */
-:root {
-  --azul-uac: #003366; /* Azul Universidad Andina del Cusco */
-  --celeste-incuba: #66ccff; /* Celeste Incuba Andina Lab */
-  --violeta-incuba: #800080; /* Violeta Incuba Andina Lab */
-  --azul-incuba: #0000ff; /* Azul Incuba Andina Lab */
-}
-
-/* Estilos Generales */
-body {
-  font-family: Arial, sans-serif;
-  background-color: var(--celeste-incuba);
-  color: var(--azul-uac);
-  margin: 0;
-  padding: 0;
-}
-
-/* Encabezado */
-header {
-  background-color: var(--azul-uac);
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
-}
-
-/* Navegación */
-nav {
-  background-color: var(--celeste-incuba);
-  overflow: hidden;
-}
-
-nav a {
-  float: left;
-  display: block;
-  color: var(--azul-uac);
-  padding: 14px 20px;
-  text-decoration: none;
-  text-align: center;
-}
-
-nav a:hover {
-  background-color: var(--azul-uac);
-  color: #ffffff;
-}
-
-/* Secciones */
-section {
-  padding: 20px;
-}
-
-/* Botones */
-button {
-  background-color: var(--violeta-incuba);
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: var(--azul-incuba);
-}
-
-/* Pie de Página */
-footer {
-  background-color: var(--azul-uac);
-  color: #ffffff;
-  text-align: center;
-  padding: 10px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header1 {
+      background: #4e54c8;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+   header2 {
+      background: #8f94fb;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+style="margin-top: 10px; background: white; color: #4e54c8; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;"
+ style="margin-top: 10px; background: white; color: #4e54c8; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;"
