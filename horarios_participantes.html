@@ -34,6 +34,8 @@
 <body>
   <header>
     <h1>Reserva de Reuniones</h1>
+    Bienvenido, <span id="userName"></span></h1>
+    <button id="logoutBtn" style="margin-top: 10px; background: white; color: #4e54c8; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;">Cerrar sesión</button>
   </header>
   <div id="calendar"></div>
 
@@ -109,8 +111,26 @@
           }
         }
       });
-
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          // Mostrar nombre si está disponible, si no, el correo
+          document.getElementById("userName").textContent = user.displayName || user.email;
+        } else {
+          // Si no hay usuario logeado, redirigir al login
+          window.location.href = "login.html";
+        }
+      });
+      
       calendar.render();
+      
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "login.html";
+          }).catch((error) => {
+            console.error("Error al cerrar sesión:", error);
+            Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
+          });
+        });
     });
   </script>
 </body>
