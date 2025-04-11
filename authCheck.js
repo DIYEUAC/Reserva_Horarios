@@ -36,11 +36,11 @@ onAuthStateChanged(auth, (user) => {
   if (!user) {
     redirigirConAlerta('Debes iniciar sesión para acceder.');
   } else {
-    if (path.includes("main_docente.html") && tipo !== "docente") {
+    if (path.includes("horarios_docente.html") && tipo !== "docente") {
       redirigirConAlerta('No tienes permiso para acceder como docente.');
     }
 
-    if (path.includes("main_participante.html") && tipo !== "participante") {
+    if (path.includes("horarios_participante.html") && tipo !== "participante") {
       redirigirConAlerta('No tienes permiso para acceder como participante.');
     }
 
