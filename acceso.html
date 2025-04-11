@@ -67,19 +67,15 @@
           }
         } else { 
           // Si el correo no está registrado, redirigir al login
-          //alert("Este correo no está registrado como docente o participante.");
           Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
           window.location.href = "index.html";
           });
-          //window.location.href = "index.html"
         }
       } else {
         // Si no está autenticado, redirigir al login
-        //alert("Este correo no está registrado.");
         Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
         window.location.href = "index.html";
         });
-        //window.location.href = "index.html"
       }
     });
   </script>
