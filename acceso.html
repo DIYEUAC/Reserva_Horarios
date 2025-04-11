@@ -13,7 +13,7 @@
     <p>Cargando...</p>
   </div>
 
-  <!--script type="module">
+  <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
@@ -63,67 +63,6 @@
         });
       }
     });
-</script-->
-  <script type="module">
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0-hrqRxx8h4",
-    authDomain: "reservas-incuba.firebaseapp.com",
-    projectId: "reservas-incuba",
-    storageBucket: "reservas-incuba.appspot.com",
-    messagingSenderId: "321837960358",
-    appId: "1:321837960358:web:65127a59a8aa4aae0d7867",
-    measurementId: "G-ERQ0CQWYWG"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const userRoles = {
-    '018201307h@uandina.edu.pe': 'docente',
-    'rhumpire@uandina.edu.pe': 'docente',
-    'davilad@uandina.edu.pe': 'docente',
-    'participante@uandina.edu.pe': 'participante',
-    'otrodocente@uandina.edu.pe': 'participante'
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    console.log("Verificando autenticación...");
-
-    if (user) {
-      const userEmail = user.email;
-      console.log("Usuario autenticado:", userEmail);
-
-      document.getElementById('userName').textContent = user.displayName;
-
-      if (userRoles[userEmail]) {
-        const userRole = userRoles[userEmail];
-        console.log("Rol detectado:", userRole);
-
-        localStorage.setItem('tipoUsuario', userRole);
-
-        if (userRole === 'docente') {
-          console.log("Redirigiendo a horarios_docentes.html");
-          window.location.href = "horarios_docentes.html";
-        } else if (userRole === 'participante') {
-          console.log("Redirigiendo a horarios_participantes.html");
-          window.location.href = "horarios_participantes.html";
-        }
-      } else {
-        console.log("Correo no registrado:", userEmail);
-        Swal.fire('Este correo no está registrado.', '', 'error').then(() => {
-         // window.location.href = "index.html";
-        });
-      }
-    } else {
-      console.log("No hay usuario autenticado");
-      Swal.fire('Debes iniciar sesión.', '', 'warning').then(() => {
-       // window.location.href = "index.html";
-      });
-    }
-  });
 </script>
 </body>
 </html>
