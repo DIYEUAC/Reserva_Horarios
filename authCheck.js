@@ -1,5 +1,5 @@
 // authCheck.js
-/*
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -12,7 +12,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
+/*
 onAuthStateChanged(auth, (user) => {
   const tipo = localStorage.getItem('tipoUsuario');
   const path = window.location.pathname;
