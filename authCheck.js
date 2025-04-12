@@ -1,4 +1,5 @@
 // authCheck.js
+/*
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -48,4 +49,47 @@ onAuthStateChanged(auth, (user) => {
       redirigirConAlerta('Tu acceso aún no ha sido validado.');
     }
   }
+});*/
+onAuthStateChanged(auth, (user) => {
+  const tipo = localStorage.getItem('tipoUsuario');
+  console.log("Tipo de usuario:", tipo);  // Agrega esta línea para verificar el valor
+
+  const path = window.location.pathname;
+
+  const redirigirConAlerta = (mensaje) => {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Acceso restringido',
+        text: mensaje,
+        confirmButtonColor: '#003366',
+        confirmButtonText: 'Volver al inicio'
+      }).then(() => {
+        window.location.href = "index.html";
+      });
+    } else {
+      alert(mensaje);
+      window.location.href = "index.html";
+    }
+  };
+
+  // Verifica si estás en la página correcta y si el tipo coincide
+  if (!user) {
+    redirigirConAlerta('Debes iniciar sesión para acceder.');
+  } else {
+    console.log("Ruta actual:", path);
+
+    if (path.includes("horarios_docentes.html") && tipo !== "docente") {
+      redirigirConAlerta('No tienes permiso para acceder como docente.');
+    }
+
+    if (path.includes("horarios_participantes.html") && tipo !== "participante") {
+      redirigirConAlerta('No tienes permiso para acceder como participante.');
+    }
+
+    if (path.includes("acceso.html") && !tipo) {
+      redirigirConAlerta('Tu acceso aún no ha sido validado.');
+    }
+  }
 });
+
