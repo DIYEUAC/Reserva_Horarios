@@ -1,5 +1,3 @@
-// authCheck.js
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -12,84 +10,47 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-/*
+
+// Asegurarse de que la autenticación esté completamente cargada
 onAuthStateChanged(auth, (user) => {
-  const tipo = localStorage.getItem('tipoUsuario');
-  const path = window.location.pathname;
-
-  const redirigirConAlerta = (mensaje) => {
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Acceso restringido',
-        text: mensaje,
-        confirmButtonColor: '#003366',
-        confirmButtonText: 'Volver al inicio'
-      }).then(() => {
-        //window.location.href = "index.html";
-      });
-    } else {
-      alert(mensaje);
-      //window.location.href = "index.html";
-    }
-  };
-
   if (!user) {
     redirigirConAlerta('Debes iniciar sesión para acceder.');
-  } else {
-    if (path.includes("horarios_docentes.html") && tipo !== "docente") {
-      redirigirConAlerta('No tienes permiso para acceder como docente.');
-    }
-
-    if (path.includes("horarios_participantes.html") && tipo !== "participante") {
-      redirigirConAlerta('No tienes permiso para acceder como participante.');
-    }
-
-    if (path.includes("acceso.html") && !tipo) {
-      redirigirConAlerta('Tu acceso aún no ha sido validado.');
-    }
+    return; // Detiene la ejecución si el usuario no está logueado
   }
-});*/
-onAuthStateChanged(auth, (user) => {
+
   const tipo = localStorage.getItem('tipoUsuario');
-  console.log("Tipo de usuario:", tipo);  // Agrega esta línea para verificar el valor
+  console.log("Tipo de usuario:", tipo);
+
+  if (tipo === null) {
+    redirigirConAlerta('Tipo de usuario no definido.');
+    return; // Detiene si no hay tipo de usuario
+  }
 
   const path = window.location.pathname;
 
-  const redirigirConAlerta = (mensaje) => {
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Acceso restringido',
-        text: mensaje,
-        confirmButtonColor: '#003366',
-        confirmButtonText: 'Volver al inicio'
-      }).then(() => {
-        window.location.href = "index.html";
-      });
-    } else {
-      alert(mensaje);
-      window.location.href = "index.html";
-    }
-  };
-
-  // Verifica si estás en la página correcta y si el tipo coincide
-  if (!user) {
-    redirigirConAlerta('Debes iniciar sesión para acceder.');
-  } else {
-    console.log("Ruta actual:", path);
-
-    if (path.includes("horarios_docentes.html") && tipo !== "docente") {
-      redirigirConAlerta('No tienes permiso para acceder como docente.');
-    }
-
-    if (path.includes("horarios_participantes.html") && tipo !== "participante") {
-      redirigirConAlerta('No tienes permiso para acceder como participante.');
-    }
-
-    if (path.includes("acceso.html") && !tipo) {
-      redirigirConAlerta('Tu acceso aún no ha sido validado.');
-    }
+  // Comprobar si el tipo de usuario tiene acceso a la página
+  if (path.includes("horarios_docentes.html") && tipo !== "docente") {
+    redirigirConAlerta('No tienes permiso para acceder como docente.');
+  } else if (path.includes("horarios_participantes.html") && tipo !== "participante") {
+    redirigirConAlerta('No tienes permiso para acceder como participante.');
+  } else if (path.includes("acceso.html") && !tipo) {
+    redirigirConAlerta('Tu acceso aún no ha sido validado.');
   }
 });
 
+const redirigirConAlerta = (mensaje) => {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Acceso restringido',
+      text: mensaje,
+      confirmButtonColor: '#003366',
+      confirmButtonText: 'Volver al inicio'
+    }).then(() => {
+      window.location.href = "index.html";
+    });
+  } else {
+    alert(mensaje);
+    window.location.href = "index.html";
+  }
+};
