@@ -75,13 +75,18 @@
       calendar.render();
 
       // Cerrar sesión
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        signOut(auth).then(() => {
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        const auth = getAuth();
+        
+        // Eliminar items específicos del localStorage antes de cerrar sesión
+        localStorage.removeItem('tipoUsuario');
+        localStorage.removeItem('userEmail');
+        
+        // Verificar si estamos en la página de inicio antes de redirigir
+        if (window.location.pathname !== "/index.html") {
+          await signOut(auth);
           window.location.href = "index.html";
-        }).catch((error) => {
-          console.error("Error al cerrar sesión:", error);
-          Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
-        });
+        }
       });
     });
   </script>
