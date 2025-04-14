@@ -38,7 +38,7 @@
 
           // Cargar carpeta desde JSON
           try {
-            const res = await fetch('json/carpetas_participantes.json');
+            const res = await fetch('json/carpetas_personales.json');
             const carpetas = await res.json();
             const info = carpetas.find(p => p.correo === userEmail);
             if (info) {
