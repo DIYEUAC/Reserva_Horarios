@@ -31,15 +31,19 @@ esperarAuthListo()
     // Se asegura de que el user está autenticado y se ejecuta la lógica después de la carga
     console.log("Usuario autenticado:", user);
 
+    // Obtener tipo de usuario desde localStorage
     const tipo = localStorage.getItem('tipoUsuario');
     console.log("Tipo de usuario:", tipo);
 
-    const path = window.location.pathname;
+    // Aquí confirmamos que la validación del tipo de usuario solo se hace después de la autenticación
     if (tipo === null) {
       redirigirConAlerta('Tipo de usuario no definido.');
       return;
     }
 
+    const path = window.location.pathname;
+
+    // Redirección según el tipo de usuario
     if (path.includes("horarios_docentes.html") && tipo !== "docente") {
       redirigirConAlerta('No tienes permiso para acceder como docente.');
     } else if (path.includes("horarios_participantes.html") && tipo !== "participante") {
