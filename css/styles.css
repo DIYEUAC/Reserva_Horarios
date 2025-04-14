@@ -65,3 +65,11 @@ footer {
 .social-icons a:hover {
     color: #4285f4;
 }
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
