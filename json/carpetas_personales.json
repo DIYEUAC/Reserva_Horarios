@@ -1,7 +1,17 @@
 [
   {
     "nombre": "Adrian Romero",
-    "correo": "018201307h@uandina.edu.pe",
+    "email": "018201307h@uandina.edu.pe",
+    "link": "https://drive.google.com/drive/folders/1LwWOzpWYNX1_blRUjVfgQtLH3Ey0L35B?usp=sharing"
+  },
+  {
+    "nombre": "Andy Humpire",
+    "email": "rhumpire@uandina.edu.pe",
+    "link": "https://drive.google.com/drive/folders/1VdICxlfX7_8PDm1r7PcNZkrLvdU4XOrR?usp=drive_link"
+  },
+  {
+    "nombre": "Dennisse Avila",
+    "email": "davilad@uandina.edu.pe",
     "link": "https://drive.google.com/drive/folders/1LwWOzpWYNX1_blRUjVfgQtLH3Ey0L35B?usp=sharing"
   }
 ]
