@@ -6,15 +6,30 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header>
     <h1>Panel Docente - Gestión de Horarios<br>
     Bienvenido, <span id="userName"></span></h1>
-    <button id="logoutBtn">Cerrar sesión</button>
+    <div id="userFolderLink"></div>
   </header>
 
   <div id="calendar"></div>
+
+  <div id="logoutContainer">
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
+
+  <footer>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Escudo_UAC.svg/1200px-Escudo_UAC.svg.png" alt="Logo UAC" class="footer-logo">
+    <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/uandinaoficial" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/uandinaoficial/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@UniversidadAndinaDelCusco" target="_blank"><i class="fab fa-youtube"></i></a>
+    </div>
+  </footer>
 
   <!-- FullCalendar -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
@@ -42,9 +57,8 @@
             .then(data => {
               const usuario = data.find(u => u.email === userEmail);
               if (usuario) {
-                const linkDiv = document.createElement("div");
+                const linkDiv = document.getElementById("userFolderLink");
                 linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
-                document.querySelector("header").appendChild(linkDiv);
               }
             })
             .catch(error => {
@@ -101,18 +115,4 @@
     });
   </script>
 </body>
-  <div>
-    <button id="logoutBtn">Cerrar sesión</button>
-  </div>
-  <footer class="footer">
-      <div>
-        <button id="logoutBtn">Cerrar sesión</button>
-      </div>
-        <div class="container text-center">
-            <p 
-                class="text-muted">Dirección de Innovación y Emprendimiento
-                <a href="https://sites.google.com/uandina.edu.pe/innovacion-emprendimiento/inicio">VRIN-DIyE</a>
-            </p>
-        </div>
-    </footer>
 </html>
