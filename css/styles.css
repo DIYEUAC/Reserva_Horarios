@@ -73,3 +73,10 @@ footer {
   margin: 0 auto;
   flex-wrap: wrap;
 }
+.header-text {
+  flex-grow: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
