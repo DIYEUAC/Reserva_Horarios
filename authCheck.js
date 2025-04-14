@@ -12,50 +12,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Función para esperar a que Firebase esté completamente inicializado y obtener el estado de autenticación
-const esperarAuthListo = () => {
+// Función para esperar que Firebase termine de inicializar y verificar el estado del usuario
+const verificarUsuario = () => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        resolve(user); // Resuelve si hay un usuario autenticado
+        resolve(user); // Resuelve si el usuario está autenticado
       } else {
-        reject("Usuario no autenticado"); // Rechaza si no hay usuario
+        reject("Usuario no autenticado"); // Rechaza si no hay usuario autenticado
       }
-      unsubscribe(); // Limpia el listener después de que se resuelva
+      unsubscribe(); // Elimina el listener después de la verificación
     });
   });
 };
 
-// Usar la promesa para esperar el estado de autenticación
-esperarAuthListo()
+// Llamamos a la función para verificar el estado de autenticación
+verificarUsuario()
   .then((user) => {
-    // El usuario está autenticado
+    // Aquí sabemos que el usuario está autenticado
     console.log("Usuario autenticado:", user);
 
-    // Obtener tipo de usuario desde localStorage
-    const tipo = localStorage.getItem('tipoUsuario');
-    console.log("Tipo de usuario:", tipo);
-
-    // Confirmar que el tipo de usuario existe
-    if (!tipo) {
+    // Verificamos que el tipo de usuario esté en localStorage
+    const tipoUsuario = localStorage.getItem('tipoUsuario');
+    if (!tipoUsuario) {
       console.error("Tipo de usuario no encontrado en localStorage.");
       redirigirConAlerta("Tipo de usuario no definido. Redirigiendo al inicio.");
       return;
     }
 
-    // Validación para redirección según el tipo de usuario
+    // Verificamos la página y redirigimos según el tipo de usuario
     const path = window.location.pathname;
 
-    // Redirección dependiendo del tipo de usuario
-    if (path.includes("horarios_docentes.html") && tipo !== "docente") {
+    if (path.includes("horarios_docentes.html") && tipoUsuario !== "docente") {
       redirigirConAlerta("No tienes permiso para acceder como docente.");
-    } else if (path.includes("horarios_participantes.html") && tipo !== "participante") {
+    } else if (path.includes("horarios_participantes.html") && tipoUsuario !== "participante") {
       redirigirConAlerta("No tienes permiso para acceder como participante.");
     }
+
+    // Si todo está bien, continuamos con la carga normal de la página
   })
   .catch((error) => {
-    // Si el usuario no está autenticado, redirige al login
-    console.error(error);
+    // Si Firebase no detecta un usuario autenticado, redirigimos al login
+    console.error("Error de autenticación:", error);
     redirigirConAlerta("Debes iniciar sesión para acceder.");
   });
 
