@@ -22,7 +22,7 @@ footer {
 #calendar {
     max-width: 80%;
     margin: 40px auto;
-    background: white;
+    background: grey;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
@@ -30,7 +30,7 @@ footer {
 #logoutBtn{
     margin-top: 10px; 
     background: #cd1267; 
-    color: #4e54c8; 
+    color: black; 
     padding: 8px 16px; 
     border: none; 
     border-radius: 8px; 
