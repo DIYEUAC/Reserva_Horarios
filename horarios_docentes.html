@@ -11,7 +11,6 @@
   <header>
     <h1>Panel Docente - Gestión de Horarios<br>
     Bienvenido, <span id="userName"></span></h1>
-    <p id="carpetaPersonal"></p>
     <button id="logoutBtn">Cerrar sesión</button>
   </header>
 
@@ -19,7 +18,7 @@
 
   <!-- FullCalendar -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
+  
   <!-- Validación de autenticación -->
   <script type="module" src="authCheck.js"></script>
 
@@ -30,28 +29,27 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = getAuth();
 
-      onAuthStateChanged(auth, async user => {
+      // Mostrar nombre del usuario y su carpeta personal
+      onAuthStateChanged(auth, user => {
         if (user) {
           const userEmail = user.email;
-          const userName = user.displayName || userEmail;
-          document.getElementById("userName").textContent = userName;
+          console.log("Correo del usuario autenticado:", userEmail);
+          document.getElementById("userName").textContent = user.displayName || userEmail;
 
-          // Cargar carpeta desde JSON
-          try {
-            const res = await fetch('json/carpetas_personales.json');
-            const carpetas = await res.json();
-            const info = carpetas.find(p => p.correo === userEmail);
-            if (info) {
-              document.getElementById("carpetaPersonal").innerHTML = `
-                <strong>Carpeta personal:</strong> 
-                <a href="${info.link}" target="_blank">${info.link}</a>`;
-            } else {
-              document.getElementById("carpetaPersonal").innerHTML = `<em>No hay carpeta registrada.</em>`;
-            }
-          } catch (e) {
-            console.error("Error al cargar carpetas:", e);
-            document.getElementById("carpetaPersonal").innerHTML = `<em>Error al cargar carpeta.</em>`;
-          }
+          // Cargar el JSON con los enlaces personales
+          fetch("json/links_usuarios.json")
+            .then(response => response.json())
+            .then(data => {
+              const usuario = data.find(u => u.email === userEmail);
+              if (usuario) {
+                const linkDiv = document.createElement("div");
+                linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
+                document.querySelector("header").appendChild(linkDiv);
+              }
+            })
+            .catch(error => {
+              console.error("Error al cargar links_usuarios.json:", error);
+            });
         }
       });
 
@@ -62,7 +60,7 @@
       ]);
 
       const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),      // Verde para Andy
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),     // Verde para Andy
         ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))  // Violeta para Dennisse
       ];
 
