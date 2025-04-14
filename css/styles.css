@@ -37,7 +37,7 @@ footer {
     cursor: pointer;
 }
 #logoutBtn:hover {
-    background-color: #c9302c;
+    background-color: #00FFFF;
 }
 #userFolderLink {
     margin-top: 0.5rem;
