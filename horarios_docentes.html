@@ -11,6 +11,7 @@
   <header>
     <h1>Panel Docente - Gestión de Horarios<br>
     Bienvenido, <span id="userName"></span></h1>
+    <p id="carpetaPersonal"></p>
     <button id="logoutBtn">Cerrar sesión</button>
   </header>
 
@@ -18,7 +19,7 @@
 
   <!-- FullCalendar -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  
+
   <!-- Validación de autenticación -->
   <script type="module" src="authCheck.js"></script>
 
@@ -29,17 +30,35 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = getAuth();
 
-      // Mostrar nombre del usuario
-      onAuthStateChanged(auth, user => {
+      onAuthStateChanged(auth, async user => {
         if (user) {
-          document.getElementById("userName").textContent = user.displayName || user.email;
+          const userEmail = user.email;
+          const userName = user.displayName || userEmail;
+          document.getElementById("userName").textContent = userName;
+
+          // Cargar carpeta desde JSON
+          try {
+            const res = await fetch('json/carpetas_participantes.json');
+            const carpetas = await res.json();
+            const info = carpetas.find(p => p.correo === userEmail);
+            if (info) {
+              document.getElementById("carpetaPersonal").innerHTML = `
+                <strong>Carpeta personal:</strong> 
+                <a href="${info.link}" target="_blank">${info.link}</a>`;
+            } else {
+              document.getElementById("carpetaPersonal").innerHTML = `<em>No hay carpeta registrada.</em>`;
+            }
+          } catch (e) {
+            console.error("Error al cargar carpetas:", e);
+            document.getElementById("carpetaPersonal").innerHTML = `<em>Error al cargar carpeta.</em>`;
+          }
         }
       });
 
       // Cargar eventos desde JSON
-      const [andyEvents, dennisseEvents] = await Promise.all([ 
-        fetch('json/andy_eventos.json').then(r => r.json()), 
-        fetch('json/dennisse_eventos.json').then(r => r.json()) 
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('json/andy_eventos.json').then(r => r.json()),
+        fetch('json/dennisse_eventos.json').then(r => r.json())
       ]);
 
       const eventos = [
@@ -76,17 +95,10 @@
 
       // Cerrar sesión
       document.getElementById("logoutBtn").addEventListener("click", async () => {
-        const auth = getAuth();
-        
-        // Eliminar items específicos del localStorage antes de cerrar sesión
         localStorage.removeItem('tipoUsuario');
         localStorage.removeItem('userEmail');
-        
-        // Verificar si estamos en la página de inicio antes de redirigir
-        if (window.location.pathname !== "/index.html") {
-          await signOut(auth);
-          window.location.href = "index.html";
-        }
+        await signOut(auth);
+        window.location.href = "index.html";
       });
     });
   </script>
