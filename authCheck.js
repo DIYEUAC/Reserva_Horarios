@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAe3LW9dme23o1AGXqg4WkJ0",
   authDomain: "reservas-incuba.firebaseapp.com",
@@ -16,7 +17,7 @@ const esperarAuthListo = () => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        resolve(user); // Resuelve si hay un usuario
+        resolve(user); // Resuelve si hay un usuario autenticado
       } else {
         reject("Usuario no autenticado"); // Rechaza si no hay usuario
       }
@@ -28,34 +29,34 @@ const esperarAuthListo = () => {
 // Usar la promesa para esperar el estado de autenticación
 esperarAuthListo()
   .then((user) => {
-    // Se asegura de que el user está autenticado y se ejecuta la lógica después de la carga
+    // El usuario está autenticado
     console.log("Usuario autenticado:", user);
 
     // Obtener tipo de usuario desde localStorage
     const tipo = localStorage.getItem('tipoUsuario');
     console.log("Tipo de usuario:", tipo);
 
-    // Aquí confirmamos que la validación del tipo de usuario solo se hace después de la autenticación
-    if (tipo === null) {
-      redirigirConAlerta('Tipo de usuario no definido.');
+    // Confirmar que el tipo de usuario existe
+    if (!tipo) {
+      console.error("Tipo de usuario no encontrado en localStorage.");
+      redirigirConAlerta("Tipo de usuario no definido. Redirigiendo al inicio.");
       return;
     }
 
+    // Validación para redirección según el tipo de usuario
     const path = window.location.pathname;
 
-    // Redirección según el tipo de usuario
+    // Redirección dependiendo del tipo de usuario
     if (path.includes("horarios_docentes.html") && tipo !== "docente") {
-      redirigirConAlerta('No tienes permiso para acceder como docente.');
+      redirigirConAlerta("No tienes permiso para acceder como docente.");
     } else if (path.includes("horarios_participantes.html") && tipo !== "participante") {
-      redirigirConAlerta('No tienes permiso para acceder como participante.');
-    } else if (path.includes("acceso.html") && !tipo) {
-      redirigirConAlerta('Tu acceso aún no ha sido validado.');
+      redirigirConAlerta("No tienes permiso para acceder como participante.");
     }
   })
   .catch((error) => {
     // Si el usuario no está autenticado, redirige al login
-    console.log(error);
-    redirigirConAlerta('Debes iniciar sesión para acceder.');
+    console.error(error);
+    redirigirConAlerta("Debes iniciar sesión para acceder.");
   });
 
 // Función para redirigir con alerta
