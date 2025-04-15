@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: #d1d1d1;
+    background: #555555;
     margin: 0;
     padding: 0;
     padding: 0;
@@ -37,7 +37,7 @@ footer div {
 }
 #logoutBtn{
     margin-top: 10px; 
-    background: #cd1267; 
+    background: white; 
     color: black; 
     padding: 8px 16px; 
     border: none; 
@@ -45,7 +45,7 @@ footer div {
     cursor: pointer;
 }
 #logoutBtn:hover {
-    background-color: #00FFFF;
+    background-color: #4285f4;
 }
 #userFolderLink {
     margin-top: 0.5rem;
