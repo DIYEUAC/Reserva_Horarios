@@ -1,12 +1,12 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to right, #1c4378, #0eddba, #af0e79);
+    background: #909090;
     margin: 0;
     padding: 0;
     padding: 0;
 }
 header {
-    background: #4e54c8;
+    background: linear-gradient(to right, #0eddba, #af0e79, #1c4378);
     color: white;
     padding: 1rem;
     text-align: center;
