@@ -19,6 +19,9 @@ footer {
     border-top: 1px solid #ccc;
     margin-top: auto;
 }
+footer div {
+    color: white;
+}
 #logo-header {
     height: 80px;
     margin-bottom: 1rem;
@@ -58,7 +61,7 @@ footer {
 }
 .social-icons a {
     margin: 0 10px;
-    color: #555;
+    color: #ffffff;
     text-decoration: none;
     font-size: 1.2rem;
 }
