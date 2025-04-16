@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Docente - Gestión de Horarios</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="images/incuba.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
+      <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
+    </a>
+    <div class="header-text">
+      <h2>
+        Panel Docente - Gestión de Horarios<br>
+        Bienvenido, <span id="userName"></span>
+      </h2>
+      <div id="userFolderLink"></div>
+    </div>
+  </div>
+</header>
 
+<div id="calendar"></div>
+
+<div id="logoutContainer">
+  <button id="logoutBtn">Cerrar sesión</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script type="module" src="authCheck.js"></script>
+
+<script type="module">
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const userEmail = user.email;
+        document.getElementById("userName").textContent = user.displayName || userEmail;
+
+        fetch("json/carpetas_personales.json")
+          .then(response => response.json())
+          .then(data => {
+            const usuario = data.find(u => u.email === userEmail);
+            if (usuario) {
+              const linkDiv = document.getElementById("userFolderLink");
+              linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
+            }
+          })
+          .catch(error => {
+            console.error("Error al cargar carpetas_personales.json:", error);
+          });
+
+        const [andyEvents, dennisseEvents] = await Promise.all([
+          fetch('json/andy_eventos.json').then(r => r.json()),
+          fetch('json/dennisse_eventos.json').then(r => r.json())
+        ]);
+
+        const eventos = [
+          ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
+          ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
+        ];
+
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'timeGridWeek',
+          slotMinTime: '08:00:00',
+          slotMaxTime: '15:30:00',
+          locale: 'es',
+          editable: true,
+          eventClick: function (info) {
+            Swal.fire({
+              title: '¿Deseas eliminar este evento?',
+              text: info.event.title,
+              showCancelButton: true,
+              confirmButtonText: 'Eliminar',
+              cancelButtonText: 'Cancelar'
+            }).then(result => {
+              if (result.isConfirmed) {
+                const eventoOriginal = {
+                  title: "Disponible",
+                  start: info.event.start,
+                  end: info.event.end,
+                  color: info.event.backgroundColor
+                };
+                calendar.addEvent(eventoOriginal);
+                info.event.remove();
+                Swal.fire('Eliminado', 'El evento ha sido eliminado y restaurado como disponible.', 'success');
+              }
+            });
+          },
+          eventDidMount: function(info) {
+            const event = info.event;
+            let content = "";
+
+            if (event.title === "Disponible") {
+              const hora = new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " a " +
+                           new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              content = hora + "\nDisponible";
+            } else {
+              content = `${event.title}\n${event.extendedProps?.email || ''}`;
+            }
+
+            info.el.querySelector('.fc-event-title').innerHTML = content.replace(/\n/g, "<br>");
+          },
+          events: eventos
+        });
+
+        calendar.render();
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+          localStorage.removeItem('tipoUsuario');
+          localStorage.removeItem('userEmail');
+          await signOut(auth);
+          window.location.href = "index.html";
+        });
+      }
+    });
+  });
+</script>
+
+<footer>
+  <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
+  <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
+  <div class="social-icons">
+    <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
+    <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
+  </div>
+</footer>
+</body>
+</html>
