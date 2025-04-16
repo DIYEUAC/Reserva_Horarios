@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Panel Participante - Reserva de Reuniones</title>
-  <link rel="icon" href="images/logo incuba icono.png" type="image/png">
+  <link rel="icon" href="images/logo 30x30 incuba.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -79,7 +79,7 @@
           const titleLines = arg.event.title.split('\n');
           return {
             html: `
-              <div style="white-space: pre-line; font-size: 12px; line-height: 1.2;">
+              <div class="custom-event">
                 ${titleLines.map(line => `<div>${line}</div>`).join('')}
               </div>
             `
