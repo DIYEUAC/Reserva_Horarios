@@ -28,7 +28,7 @@ footer div {
 }
 #calendar {
     max-width: 80%;
-    margin: 40px auto;
+    margin: 0 auto;
     background: white;
     padding: 20px;
     border-radius: 12px;
