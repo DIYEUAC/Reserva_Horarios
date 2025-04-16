@@ -75,6 +75,8 @@
           slotMaxTime: '15:30:00',
           locale: 'es',
           editable: true,
+          allDaySlot: false,     // ✅ Oculta la fila de "Todo el día"
+          weekends: false,       // ✅ Oculta sábados y domingos
           eventClick: function (info) {
             Swal.fire({
               title: '¿Deseas eliminar este evento?',
@@ -96,21 +98,27 @@
               }
             });
           },
-          eventDidMount: function(info) {
-            const event = info.event;
-            let content = "";
-
-            if (event.title === "Disponible") {
-              const hora = new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " a " +
-                           new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-              content = hora + "\nDisponible";
-            } else {
-              content = `${event.title}\n${event.extendedProps?.email || ''}`;
-            }
-
-            info.el.querySelector('.fc-event-title').innerHTML = content.replace(/\n/g, "<br>");
+          eventContent: function(arg) {
+            const titleLines = arg.event.title.split('\n');
+            return {
+              html: `
+                <div class="custom-event">
+                  ${titleLines.map(line => `<div>${line}</div>`).join('')}
+                </div>
+              `
+            };
           },
-          events: eventos
+          events: eventos.map(evento => {
+            if (evento.title === 'Disponible') {
+              const hora = new Date(evento.start).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) + " a " +
+                           new Date(evento.end).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+              return {
+                ...evento,
+                title: `${hora}\nDisponible`
+              };
+            }
+            return evento;
+          })
         });
 
         calendar.render();
