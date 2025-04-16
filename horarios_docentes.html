@@ -72,11 +72,12 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: 'timeGridWeek',
           slotMinTime: '08:00:00',
-          slotMaxTime: '15:30:00',
+          slotMaxTime: '16:00:00',
           locale: 'es',
-          editable: true,
-          allDaySlot: false,     // ✅ Oculta la fila de "Todo el día"
-          weekends: false,       // ✅ Oculta sábados y domingos
+          editable: false,
+          eventOverlap: false,
+          allDaySlot: false,
+          weekends: false,
           eventClick: function (info) {
             Swal.fire({
               title: '¿Deseas eliminar este evento?',
