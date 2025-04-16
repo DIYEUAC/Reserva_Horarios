@@ -107,5 +107,9 @@ footer div {
 }
 
 .fc-timegrid-slot {
-  height: 48px !important;
+  height: 50px !important;
+}
+.fc-col-header-cell,
+.fc-timegrid-col {
+  width: 150px !important;
 }
