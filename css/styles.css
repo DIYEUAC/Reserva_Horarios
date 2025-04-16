@@ -49,6 +49,7 @@ footer div {
 }
 #userFolderLink {
     margin-top: 0.5rem;
+    color: white;
 }
 #logoutContainer {
     text-align: center;
