@@ -2,157 +2,150 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reserva de Reuniones - Participante</title>
+  <title>Panel Participante - Gestión de Horarios</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
-        <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
-      </a>
-      <div class="header-text">
-        <h2>
-          Reserva de Reuniones<br>
-          Bienvenido, <span id="userName"></span>
-        </h2>
-        <div id="userFolderLink"></div>
-      </div>
+<header>
+  <div class="header-content">
+    <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
+      <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
+    </a>
+    <div class="header-text">
+      <h2>
+        Panel Participante - Gestión de Horarios<br>
+        Bienvenido, <span id="userName"></span>
+      </h2>
+      <div id="userFolderLink"></div>
     </div>
-  </header>
-
-  <div id="calendar"></div>
-
-  <div id="logoutContainer">
-    <button id="logoutBtn">Cerrar sesión</button>
   </div>
+</header>
 
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script type="module">
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+<div id="calendar"></div>
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const auth = getAuth();
-      const calendarEl = document.getElementById('calendar');
-      let userEmail = "";
+<div id="logoutContainer">
+  <button id="logoutBtn">Cerrar sesión</button>
+</div>
 
-      // Autenticación y datos del usuario
-      onAuthStateChanged(auth, async user => {
-        if (user) {
-          userEmail = user.email;
-          document.getElementById("userName").textContent = user.displayName || user.email;
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script type="module" src="authCheck.js"></script>
 
-          // Enlace a carpeta personal
-          try {
-            const res = await fetch("json/carpetas_personales.json");
-            const data = await res.json();
+<script type="module">
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const userEmail = user.email;
+        console.log("Usuario autenticado:", userEmail);
+        document.getElementById("userName").textContent = user.displayName || userEmail;
+
+        fetch("json/carpetas_personales.json")
+          .then(response => response.json())
+          .then(data => {
             const usuario = data.find(u => u.email === userEmail);
             if (usuario) {
-              const linkDiv = document.getElementById("userFolderLink");
-              linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
+              document.getElementById("userFolderLink").innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
             }
-          } catch (error) {
-            console.error("Error cargando carpetas personales:", error);
-          }
-        } else {
-          window.location.href = "index.html";
-        }
-      });
+          });
 
-      // Cargar eventos
-      const [andyEvents, dennisseEvents] = await Promise.all([
-        fetch('json/andy_eventos.json').then(r => r.json()),
-        fetch('json/dennisse_eventos.json').then(r => r.json())
-      ]);
+        const [andyEvents, dennisseEvents] = await Promise.all([
+          fetch('json/andy_eventos.json').then(r => r.json()),
+          fetch('json/dennisse_eventos.json').then(r => r.json())
+        ]);
 
-      const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),     // Verde
-        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))  // Violeta
-      ];
+        const eventos = [
+          ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
+          ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
+        ];
 
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'timeGridWeek',
-        slotMinTime: '08:00:00',
-        slotMaxTime: '15:30:00',
-        locale: 'es',
-        allDaySlot: false,
-        nowIndicator: true,
-        events: eventos,
-        eventClick: function (info) {
-          const event = info.event;
-          const props = event.extendedProps;
-
-          // Solo se puede reservar si está disponible
-          if (props.estado === "Disponible") {
-            Swal.fire({
-              title: `Reserva con ${props.docente}`,
-              html: `
-                <input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">
-                <input type="email" id="correo" class="swal2-input" value="${userEmail}" disabled>
-                <input type="tel" id="numero" class="swal2-input" placeholder="Número de celular">
-              `,
-              confirmButtonText: 'Reservar',
-              showCancelButton: true,
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'timeGridWeek',
+          slotMinTime: '08:00:00',
+          slotMaxTime: '15:30:00',
+          locale: 'es',
+          editable: true,
+          selectable: true,
+          events: eventos,
+          select: async function(info) {
+            const { value: formValues } = await Swal.fire({
+              title: 'Registrar cita',
+              html:
+                '<input id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">' +
+                `<input type="email" id="correo" class="swal2-input" value="${userEmail}" disabled>` +
+                '<input id="numero" class="swal2-input" placeholder="Número de contacto">',
+              focusConfirm: false,
               preConfirm: () => {
-                const nombre = document.getElementById('nombre').value;
-                const numero = document.getElementById('numero').value;
-                if (!nombre || !numero) {
-                  Swal.showValidationMessage('Completa todos los campos');
+                return {
+                  title: document.getElementById('nombre').value,
+                  correo: userEmail,
+                  numero: document.getElementById('numero').value
+                };
+              }
+            });
+
+            if (formValues) {
+              calendar.addEvent({
+                title: formValues.title,
+                start: info.startStr,
+                end: info.endStr,
+                extendedProps: {
+                  correo: formValues.correo,
+                  numero: formValues.numero
+                },
+                backgroundColor: '#5a9bd3' // color azul participante
+              });
+              Swal.fire('Registrado', 'Tu cita ha sido registrada.', 'success');
+            }
+          },
+          eventClick: function(info) {
+            const userEvent = info.event.extendedProps.correo === userEmail;
+            if (userEvent) {
+              Swal.fire({
+                title: '¿Deseas eliminar esta cita?',
+                text: info.event.title,
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar'
+              }).then(result => {
+                if (result.isConfirmed) {
+                  info.event.remove();
+                  Swal.fire('Eliminado', 'Tu cita ha sido eliminada.', 'success');
                 }
-                return { nombre, correo: userEmail, numero };
-              }
-            }).then(result => {
-              if (result.isConfirmed) {
-                event.setProp('title', result.value.nombre);
-                event.setExtendedProp('estado', 'Ocupado');
-                event.setExtendedProp('owner', userEmail);
-                event.setProp('color', '#adb5bd');
-                Swal.fire('¡Reservado!', 'Tu reunión fue registrada correctamente.', 'success');
-                // Aquí podrías enviar los datos al backend o Firebase
-              }
-            });
-          } else if (props.owner === userEmail) {
-            Swal.fire({
-              title: '¿Deseas cancelar tu reserva?',
-              text: 'Esta acción no se puede deshacer.',
-              confirmButtonText: 'Cancelar reserva',
-              showCancelButton: true
-            }).then(result => {
-              if (result.isConfirmed) {
-                event.remove();
-                Swal.fire('Eliminado', 'Tu reserva ha sido cancelada.', 'success');
-                // Aquí podrías eliminar del backend o Firebase
-              }
-            });
-          } else {
-            Swal.fire('No disponible', 'Este horario ya fue reservado.', 'info');
+              });
+            } else {
+              Swal.fire('Acceso denegado', 'Solo puedes editar o eliminar tus propias reservas.', 'error');
+            }
           }
-        }
-      });
+        });
 
-      calendar.render();
-
-      // Logout
-      document.getElementById("logoutBtn").addEventListener("click", async () => {
-        localStorage.removeItem('tipoUsuario');
-        localStorage.removeItem('userEmail');
-        await signOut(auth);
-        window.location.href = "index.html";
-      });
+        calendar.render();
+      }
     });
-  </script>
 
-  <footer>
-    <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
-    <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
-    <div class="social-icons">
-      <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
-    </div>
-  </footer>
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      localStorage.removeItem('tipoUsuario');
+      localStorage.removeItem('userEmail');
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  });
+</script>
+
+<footer>
+  <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
+  <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
+  <div class="social-icons">
+    <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
+    <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
+  </div>
+</footer>
 </body>
 </html>
