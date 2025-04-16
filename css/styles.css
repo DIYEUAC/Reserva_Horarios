@@ -27,7 +27,7 @@ footer div {
     object-fit: contain;
 }
 #calendar {
-    max-width: 80%;
+    max-width: 1500px;
     margin: 0 auto;
     background: white;
     padding: 20px;
