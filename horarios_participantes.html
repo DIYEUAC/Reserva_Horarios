@@ -71,7 +71,10 @@
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        editable: false, // Desactiva el arrastre de eventos
+        editable: false,
+        eventStartEditable: false,
+        eventDurationEditable: false,
+        selectable: false,
         eventClick: function(info) {
           const evento = info.event;
           if (evento.extendedProps.email === userEmail) {
@@ -91,14 +94,18 @@
           }
         },
         dateClick: function(info) {
-          const slotDisponible = eventos.find(e => e.start === info.dateStr && e.title === "Disponible");
+          const clickedTime = new Date(info.dateStr).toISOString().slice(0, 16);
+          const slotDisponible = eventos.find(e =>
+            new Date(e.start).toISOString().slice(0, 16) === clickedTime &&
+            e.title === "Disponible"
+          );
           if (!slotDisponible) return;
 
           Swal.fire({
             title: 'Reservar Cita',
             html:
               '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
-              '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, '')">' +
+              '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
               `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>` ,
             focusConfirm: false,
             preConfirm: () => {
@@ -133,18 +140,4 @@
         localStorage.removeItem('tipoUsuario');
         localStorage.removeItem('userEmail');
         await signOut(auth);
-        window.location.href = "index.html";
-      });
-    });
-  </script>
-  <footer>
-    <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
-    <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
-    <div class="social-icons">
-      <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
-    </div>
-  </footer>
-</body>
-</html>
+        window.location.href =
