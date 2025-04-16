@@ -94,7 +94,7 @@
               title: 'Reservar Cita',
               html:
                 '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
-                '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
+                '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">',
               focusConfirm: false,
               preConfirm: () => {
                 const nombre = document.getElementById('nombreEmprendimiento').value.trim();
