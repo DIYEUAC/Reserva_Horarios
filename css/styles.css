@@ -93,12 +93,13 @@ footer div {
     overflow: visible !important;
 }
 .custom-event {
-    justify-content: center;
-    height: auto !important;
-    font-size: 12px;
-    padding: 2px;
-    white-space: normal !important;
-    overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  font-size: 0.9em;
+  white-space: pre-line;
 }
 .fc-event {
     min-height: 40px !important;
