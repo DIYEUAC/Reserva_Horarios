@@ -2,34 +2,55 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reserva de Horarios - Incuba Andina Lab</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <title>Reserva de Reuniones - Incuba Andina Lab</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="authCheck.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header>
-    <style>
-      header{
-      background: #8f94fb;
-      }
-    </style>
-    <h1>Reserva de Reuniones</h1>
-    Bienvenido, <span id="userName"></span></h1>
-    <button id="logoutBtn">Cerrar sesión</button>
+    <div class="header-content">
+      <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
+        <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
+      </a>
+      <div class="header-text">
+        <h2>
+          Reserva de Reuniones<br>
+          Bienvenido, <span id="userName"></span>
+        </h2>
+      </div>
+    </div>
   </header>
+
   <div id="calendar"></div>
 
+  <div id="logoutContainer">
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      const calendarEl = document.getElementById('calendar');
-      const userEmail = localStorage.getItem('userEmail'); // Para validación del propietario
+  <script type="module" src="authCheck.js"></script>
+
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = getAuth();
+      let userEmail = "";
+
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          userEmail = user.email;
+          document.getElementById("userName").textContent = user.displayName || user.email;
+        } else {
+          window.location.href = "index.html";
+        }
+      });
 
       const [andyEvents, dennisseEvents] = await Promise.all([
-        fetch('andy_eventos.json').then(r => r.json()),
-        fetch('dennisse_eventos.json').then(r => r.json())
+        fetch('json/andy_eventos.json').then(r => r.json()),
+        fetch('json/dennisse_eventos.json').then(r => r.json())
       ]);
 
       const eventos = [
@@ -37,13 +58,14 @@
         ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
       ];
 
+      const calendarEl = document.getElementById('calendar');
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        allDaySlot: false,
         nowIndicator: true,
+        allDaySlot: false,
         events: eventos,
         eventClick: function (info) {
           if (info.event.extendedProps.estado === "Disponible") {
@@ -67,7 +89,6 @@
               }
             }).then(result => {
               if (result.isConfirmed) {
-                // Enviar a backend...
                 Swal.fire('¡Reservado!', 'Tu reunión fue registrada correctamente.', 'success');
                 info.event.setProp('title', result.value.nombre);
                 info.event.setExtendedProp('estado', 'Ocupado');
@@ -93,27 +114,26 @@
           }
         }
       });
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          // Mostrar nombre si está disponible, si no, el correo
-          document.getElementById("userName").textContent = user.displayName || user.email;
-        } else {
-          // Si no hay usuario logeado, redirigir al login
-          window.location.href = "index.html";
-        }
-      });
-      
+
       calendar.render();
-      
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-      firebase.auth().signOut().then(() => {
+
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        localStorage.removeItem('tipoUsuario');
+        localStorage.removeItem('userEmail');
+        await signOut(auth);
         window.location.href = "index.html";
-          }).catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-            Swal.fire('Error', 'No se pudo cerrar sesión.', 'error');
-          });
-        });
+      });
     });
   </script>
+
+  <footer>
+    <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
+    <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
+    </div>
+  </footer>
 </body>
 </html>
