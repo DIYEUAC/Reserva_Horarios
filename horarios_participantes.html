@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel Participante - Reserva de reuniones</title>
+  <title>Reserva de Reuniones - Panel Participante</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -16,7 +16,7 @@
       </a>
       <div class="header-text">
         <h2>
-          Panel Participante - Reserva de reuniones<br>
+          Reserva de Reuniones - Panel Participante<br>
           Bienvenido, <span id="userName"></span>
         </h2>
         <div id="userFolderLink"></div>
@@ -71,10 +71,45 @@
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        editable: false,
+        editable: true,
+        eventStartEditable: true,
+        eventDurationEditable: false,
         eventClick: function(info) {
           const evento = info.event;
-          if (evento.extendedProps.email === userEmail) {
+
+          if (evento.title === "Disponible") {
+            Swal.fire({
+              title: 'Reservar Cita',
+              html:
+                '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
+                '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
+                `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>`,
+              focusConfirm: false,
+              preConfirm: () => {
+                const nombre = document.getElementById('nombreEmprendimiento').value.trim();
+                const celular = document.getElementById('celular').value.trim();
+                if (!nombre || !celular) {
+                  Swal.showValidationMessage('Por favor completa todos los campos');
+                  return false;
+                }
+                return { nombre, celular };
+              }
+            }).then(result => {
+              if (result.isConfirmed) {
+                evento.remove();
+                calendar.addEvent({
+                  title: result.value.nombre,
+                  start: evento.startStr,
+                  end: evento.endStr,
+                  color: '#2196F3',
+                  email: userEmail
+                });
+                Swal.fire('¡Cita registrada!', '', 'success');
+                // Aquí agregar lógica para guardar en backend
+              }
+            });
+
+          } else if (evento.extendedProps.email === userEmail) {
             Swal.fire({
               title: '¿Deseas eliminar esta cita?',
               text: evento.title,
@@ -90,49 +125,8 @@
             });
           }
         },
-        dateClick: function(info) {
-          // Verifica si el slot tiene un evento "Disponible"
-          const slotDisponible = calendar.getEvents().find(ev =>
-            ev.startStr === info.dateStr &&
-            ev.title === "Disponible"
-          );
-
-          if (!slotDisponible) return;
-
-          Swal.fire({
-            title: 'Reservar Cita',
-            html:
-              '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
-              '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
-              `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>`,
-            focusConfirm: false,
-            preConfirm: () => {
-              const nombre = document.getElementById('nombreEmprendimiento').value.trim();
-              const celular = document.getElementById('celular').value.trim();
-              if (!nombre || !celular) {
-                Swal.showValidationMessage('Por favor completa todos los campos');
-                return false;
-              }
-              return { nombre, celular };
-            }
-          }).then(result => {
-            if (result.isConfirmed) {
-              // Elimina el evento "Disponible"
-              slotDisponible.remove();
-
-              // Añade la nueva cita
-              calendar.addEvent({
-                title: result.value.nombre,
-                start: info.dateStr,
-                end: new Date(new Date(info.dateStr).getTime() + 30 * 60000).toISOString(),
-                color: '#2196F3',
-                email: userEmail
-              });
-
-              Swal.fire('¡Cita registrada!', '', 'success');
-              // Aquí agregar lógica para guardar en backend
-            }
-          });
+        eventAllow: function(dropInfo, draggedEvent) {
+          return draggedEvent.extendedProps.email === userEmail;
         },
         events: eventos
       });
