@@ -77,33 +77,41 @@
             const { value: formValues } = await Swal.fire({
               title: 'Registrar cita',
               html:
-                '<input id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">' +
-                `<input type="email" id="correo" class="swal2-input" value="${userEmail}" disabled>` +
-                '<input id="numero" class="swal2-input" placeholder="Número de contacto">',
+                `<input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">` +
+                `<input type="email" id="correo" class="swal2-input" placeholder="Correo UAC" value="${userEmail}" disabled>` +
+                `<input type="tel" id="celular" class="swal2-input" placeholder="Celular" pattern="[0-9]+">`,
               focusConfirm: false,
               preConfirm: () => {
-                return {
-                  title: document.getElementById('nombre').value,
-                  correo: userEmail,
-                  numero: document.getElementById('numero').value
-                };
+                const nombre = document.getElementById('nombre').value.trim();
+                const celular = document.getElementById('celular').value.trim();
+                const soloNumeros = /^[0-9]+$/;
+              
+                if (!nombre || !celular) {
+                  Swal.showValidationMessage('Por favor, completa todos los campos.');
+                  return false;
+                }
+                if (!soloNumeros.test(celular)) {
+                  Swal.showValidationMessage('El número de celular debe contener solo dígitos.');
+                  return false;
+                }
+                return { nombre, celular };
               }
-            });
-
-            if (formValues) {
-              calendar.addEvent({
-                title: formValues.title,
-                start: info.startStr,
-                end: info.endStr,
-                extendedProps: {
-                  correo: formValues.correo,
-                  numero: formValues.numero
-                },
-                backgroundColor: '#5a9bd3' // color azul participante
-              });
-              Swal.fire('Registrado', 'Tu cita ha sido registrada.', 'success');
-            }
-          },
+            }).then(result => {
+                if (result.isConfirmed) {
+                  const { nombre, celular } = result.value;
+              
+                  // Aquí agregas la cita al calendario, o llamas al backend para guardarla
+                  calendar.addEvent({
+                    title: `${nombre} (${celular})`,
+                    start: info.start,
+                    end: info.end,
+                    extendedProps: {
+                      email: userEmail
+                    }
+                  });
+                   Swal.fire('Reservado', 'Tu cita ha sido registrada correctamente.', 'success');
+                    }
+                  });
           eventClick: function(info) {
             const userEvent = info.event.extendedProps.correo === userEmail;
             if (userEvent) {
