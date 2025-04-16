@@ -9,14 +9,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-<header>
+ <header>
   <div class="header-content">
     <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
       <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
     </a>
     <div class="header-text">
       <h2>
-        Panel Participante - Reserva de cita<br>
+        Panel Participante - Gestión de Horarios<br>
         Bienvenido, <span id="userName"></span>
       </h2>
       <div id="userFolderLink"></div>
@@ -24,136 +24,140 @@
   </div>
 </header>
 
-<div id="calendar"></div>
+  <div id="calendar"></div>
 
-<div id="logoutContainer">
-  <button id="logoutBtn">Cerrar sesión</button>
-</div>
+  <div id="logoutContainer">
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script type="module" src="authCheck.js"></script>
+  <!-- FullCalendar -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  
+  <!-- Validación de autenticación -->
+  <script type="module" src="authCheck.js"></script>
 
-<script type="module">
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  <!-- Script principal del calendario -->
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    const auth = getAuth();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = getAuth();
 
-    onAuthStateChanged(auth, async user => {
-      if (user) {
-        const userEmail = user.email;
-        console.log("Usuario autenticado:", userEmail);
-        document.getElementById("userName").textContent = user.displayName || userEmail;
+      // Mostrar nombre del usuario y su carpeta personal
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          const userEmail = user.email;
+          console.log("Correo del usuario autenticado:", userEmail);
+          document.getElementById("userName").textContent = user.displayName || userEmail;
 
-        fetch("json/carpetas_personales.json")
-          .then(response => response.json())
-          .then(data => {
-            const usuario = data.find(u => u.email === userEmail);
-            if (usuario) {
-              document.getElementById("userFolderLink").innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
-            }
-          });
-
-        const [andyEvents, dennisseEvents] = await Promise.all([
-          fetch('json/andy_eventos.json').then(r => r.json()),
-          fetch('json/dennisse_eventos.json').then(r => r.json())
-        ]);
-
-        const eventos = [
-          ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
-          ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
-        ];
-
-        const calendarEl = document.getElementById('calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'timeGridWeek',
-          slotMinTime: '08:00:00',
-          slotMaxTime: '15:30:00',
-          locale: 'es',
-          editable: true,
-          selectable: true,
-          events: eventos,
-          select: async function(info) {
-            const { value: formValues } = await Swal.fire({
-              title: 'Registrar cita',
-              html:
-                `<input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">` +
-                `<input type="email" id="correo" class="swal2-input" placeholder="Correo UAC" value="${userEmail}" disabled>` +
-                `<input type="tel" id="celular" class="swal2-input" placeholder="Celular" pattern="[0-9]+">`,
-              focusConfirm: false,
-              preConfirm: () => {
-                const nombre = document.getElementById('nombre').value.trim();
-                const celular = document.getElementById('celular').value.trim();
-                const soloNumeros = /^[0-9]+$/;
-              
-                if (!nombre || !celular) {
-                  Swal.showValidationMessage('Por favor, completa todos los campos.');
-                  return false;
-                }
-                if (!soloNumeros.test(celular)) {
-                  Swal.showValidationMessage('El número de celular debe contener solo dígitos.');
-                  return false;
-                }
-                return { nombre, celular };
+          // Cargar el JSON con los enlaces personales
+          fetch("json/carpetas_personales.json")
+            .then(response => response.json())
+            .then(data => {
+              const usuario = data.find(u => u.email === userEmail);
+              if (usuario) {
+                const linkDiv = document.getElementById("userFolderLink");
+                linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
               }
-            }).then(result => {
-                if (result.isConfirmed) {
-                  const { nombre, celular } = result.value;
-              
-                  // Aquí agregas la cita al calendario, o llamas al backend para guardarla
-                  calendar.addEvent({
-                    title: `${nombre} (${celular})`,
-                    start: info.start,
-                    end: info.end,
-                    extendedProps: {
-                      email: userEmail
-                    }
-                  });
-                   Swal.fire('Reservado', 'Tu cita ha sido registrada correctamente.', 'success');
-                    }
-                  });
-          eventClick: function(info) {
-            const userEvent = info.event.extendedProps.correo === userEmail;
-            if (userEvent) {
-              Swal.fire({
-                title: '¿Deseas eliminar esta cita?',
-                text: info.event.title,
-                showCancelButton: true,
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-              }).then(result => {
-                if (result.isConfirmed) {
-                  info.event.remove();
-                  Swal.fire('Eliminado', 'Tu cita ha sido eliminada.', 'success');
+            })
+            .catch(error => {
+              console.error("Error al cargar carpetas_personales.json:", error);
+            });
+        }
+      });
+
+      // Cargar eventos desde JSON (esto puede cambiar según tu fuente de eventos)
+      const [andyEvents, dennisseEvents] = await Promise.all([
+        fetch('json/andy_eventos.json').then(r => r.json()),
+        fetch('json/dennisse_eventos.json').then(r => r.json())
+      ]);
+
+      const eventos = [
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),     // Verde para Andy
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))  // Violeta para Dennisse
+      ];
+
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        slotMinTime: '08:00:00',
+        slotMaxTime: '15:30:00',
+        locale: 'es',
+        editable: true,
+        eventClick: function (info) {
+          Swal.fire({
+            title: 'Registrar reunión',
+            html:
+              `<input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">` +
+              `<input type="email" id="correo" class="swal2-input" placeholder="Correo UAC" value="${userEmail}" disabled>` +
+              `<input type="tel" id="celular" class="swal2-input" placeholder="Celular" pattern="[0-9]+" maxlength="9">`,
+            focusConfirm: false,
+            preConfirm: () => {
+              const nombre = document.getElementById('nombre').value.trim();
+              const celular = document.getElementById('celular').value.trim();
+              const soloNumeros = /^[0-9]+$/;
+
+              // Validación de campos vacíos
+              if (!nombre || !celular) {
+                Swal.showValidationMessage('Por favor, completa todos los campos.');
+                return false;
+              }
+
+              // Validación de celular (solo números)
+              if (!soloNumeros.test(celular)) {
+                Swal.showValidationMessage('El número de celular debe contener solo dígitos.');
+                return false;
+              }
+
+              // Validación de longitud del celular (mínimo 9 dígitos)
+              if (celular.length < 9) {
+                Swal.showValidationMessage('El número de celular debe tener al menos 9 dígitos.');
+                return false;
+              }
+
+              return { nombre, celular };
+            }
+          }).then(result => {
+            if (result.isConfirmed) {
+              const { nombre, celular } = result.value;
+
+              // Aquí agregas la cita al calendario
+              calendar.addEvent({
+                title: `${nombre} (${celular})`,
+                start: info.start,
+                end: info.end,
+                extendedProps: {
+                  email: userEmail
                 }
               });
-            } else {
-              Swal.fire('Acceso denegado', 'Solo puedes editar o eliminar tus propias reservas.', 'error');
+
+              Swal.fire('Reservado', 'Tu cita ha sido registrada correctamente.', 'success');
             }
-          }
-        })
+          });
+        },
+        events: eventos
+      });
 
-        calendar.render();
-      }
+      calendar.render();
+
+      // Cerrar sesión
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        localStorage.removeItem('tipoUsuario');
+        localStorage.removeItem('userEmail');
+        await signOut(auth);
+        window.location.href = "index.html";
+      });
     });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      localStorage.removeItem('tipoUsuario');
-      localStorage.removeItem('userEmail');
-      await signOut(auth);
-      window.location.href = "index.html";
-    });
-  });
-</script>
-
-<footer>
-  <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
-  <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
-  <div class="social-icons">
-    <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
-    <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
-    <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
-  </div>
-</footer>
+  </script>
+  
+  <footer>
+    <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
+    <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/people/Incuba-Andina-Lab/61553052163921/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/incuba_andina_lab/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@IncubaAndinaLab" target="_blank"><i class="fab fa-youtube"></i></a>
+    </div>
+  </footer>
 </body>
 </html>
