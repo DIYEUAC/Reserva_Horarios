@@ -2,27 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel Participante - Reserva de Reuniones</title>
+  <title>Panel Participante - Gestión de Horarios</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
- <header>
-  <div class="header-content">
-    <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
-      <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
-    </a>
-    <div class="header-text">
-      <h2>
-        Panel Participante - Reserva de Reuniones<br>
-        Bienvenido, <span id="userName"></span>
-      </h2>
-      <div id="userFolderLink"></div>
+  <header>
+    <div class="header-content">
+      <a href="https://sites.google.com/uandina.edu.pe/incubalab" target="_blank">
+        <img src="images/Logo incuba blanco.png" alt="Logo Incuba Andina" id="logo-header">
+      </a>
+      <div class="header-text">
+        <h2>
+          Panel Participante - Gestión de Horarios<br>
+          Bienvenido, <span id="userName"></span>
+        </h2>
+        <div id="userFolderLink"></div>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
   <div id="calendar"></div>
 
@@ -30,51 +30,39 @@
     <button id="logoutBtn">Cerrar sesión</button>
   </div>
 
-  <!-- FullCalendar -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  
-  <!-- Validación de autenticación -->
   <script type="module" src="authCheck.js"></script>
-
-  <!-- Script principal del calendario -->
   <script type="module">
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = getAuth();
+      let userEmail = "";
 
-      // Mostrar nombre del usuario y su carpeta personal
       onAuthStateChanged(auth, user => {
         if (user) {
-          const userEmail = user.email;
-          console.log("Correo del usuario autenticado:", userEmail);
+          userEmail = user.email;
           document.getElementById("userName").textContent = user.displayName || userEmail;
 
-          // Cargar el JSON con los enlaces personales
           fetch("json/carpetas_personales.json")
             .then(response => response.json())
             .then(data => {
               const usuario = data.find(u => u.email === userEmail);
               if (usuario) {
-                const linkDiv = document.getElementById("userFolderLink");
-                linkDiv.innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
+                document.getElementById("userFolderLink").innerHTML = `<strong>Carpeta personal:</strong> <a href="${usuario.link}" target="_blank">Ver carpeta</a>`;
               }
-            })
-            .catch(error => {
-              console.error("Error al cargar carpetas_personales.json:", error);
             });
         }
       });
 
-      // Cargar eventos desde JSON (esto puede cambiar según tu fuente de eventos)
       const [andyEvents, dennisseEvents] = await Promise.all([
         fetch('json/andy_eventos.json').then(r => r.json()),
         fetch('json/dennisse_eventos.json').then(r => r.json())
       ]);
 
       const eventos = [
-        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),     // Verde para Andy
-        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))  // Violeta para Dennisse
+        ...andyEvents.map(ev => ({ ...ev, color: '#67bf5c' })),
+        ...dennisseEvents.map(ev => ({ ...ev, color: '#c98db1' }))
       ];
 
       const calendarEl = document.getElementById('calendar');
@@ -83,55 +71,56 @@
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        editable: true,
-        eventClick: function (info) {
+        editable: false, // Desactiva el arrastre de eventos
+        eventClick: function(info) {
+          const evento = info.event;
+          if (evento.extendedProps.email === userEmail) {
+            Swal.fire({
+              title: '¿Deseas eliminar esta cita?',
+              text: evento.title,
+              showCancelButton: true,
+              confirmButtonText: 'Eliminar',
+              cancelButtonText: 'Cancelar'
+            }).then(result => {
+              if (result.isConfirmed) {
+                evento.remove();
+                Swal.fire('Eliminado', 'Tu cita ha sido eliminada.', 'success');
+                // Aquí agregar lógica para eliminar del backend
+              }
+            });
+          }
+        },
+        dateClick: function(info) {
+          const slotDisponible = eventos.find(e => e.start === info.dateStr && e.title === "Disponible");
+          if (!slotDisponible) return;
+
           Swal.fire({
-            title: 'Registrar reunión',
+            title: 'Reservar Cita',
             html:
-              `<input type="text" id="nombre" class="swal2-input" placeholder="Nombre del emprendimiento">` +
-              `<input type="email" id="correo" class="swal2-input" placeholder="Correo UAC" value="${userEmail}" disabled>` +
-              `<input type="tel" id="celular" class="swal2-input" placeholder="Celular" pattern="[0-9]+" maxlength="9">`,
+              '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
+              '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, '')">' +
+              `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>` ,
             focusConfirm: false,
             preConfirm: () => {
-              const nombre = document.getElementById('nombre').value.trim();
+              const nombre = document.getElementById('nombreEmprendimiento').value.trim();
               const celular = document.getElementById('celular').value.trim();
-              const soloNumeros = /^[0-9]+$/;
-
-              // Validación de campos vacíos
               if (!nombre || !celular) {
-                Swal.showValidationMessage('Por favor, completa todos los campos.');
+                Swal.showValidationMessage('Por favor completa todos los campos');
                 return false;
               }
-
-              // Validación de celular (solo números)
-              if (!soloNumeros.test(celular)) {
-                Swal.showValidationMessage('El número de celular debe contener solo dígitos.');
-                return false;
-              }
-
-              // Validación de longitud del celular (mínimo 9 dígitos)
-              if (celular.length < 9) {
-                Swal.showValidationMessage('El número de celular debe tener al menos 9 dígitos.');
-                return false;
-              }
-
               return { nombre, celular };
             }
           }).then(result => {
             if (result.isConfirmed) {
-              const { nombre, celular } = result.value;
-
-              // Aquí agregas la cita al calendario
               calendar.addEvent({
-                title: `${nombre} (${celular})`,
-                start: info.start,
-                end: info.end,
-                extendedProps: {
-                  email: userEmail
-                }
+                title: result.value.nombre,
+                start: info.dateStr,
+                end: new Date(new Date(info.dateStr).getTime() + 30 * 60000).toISOString(),
+                color: '#2196F3',
+                email: userEmail
               });
-
-              Swal.fire('Reservado', 'Tu cita ha sido registrada correctamente.', 'success');
+              Swal.fire('¡Cita registrada!', '', 'success');
+              // Aquí agregar lógica para guardar en backend
             }
           });
         },
@@ -140,7 +129,6 @@
 
       calendar.render();
 
-      // Cerrar sesión
       document.getElementById("logoutBtn").addEventListener("click", async () => {
         localStorage.removeItem('tipoUsuario');
         localStorage.removeItem('userEmail');
@@ -149,7 +137,6 @@
       });
     });
   </script>
-  
   <footer>
     <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
     <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
