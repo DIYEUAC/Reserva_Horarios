@@ -115,3 +115,6 @@ footer div {
 .fc-timegrid-event .fc-event-main {
     white-space: pre-line !important;
 }
+.fc-timegrid-slot {
+  height: 48px !important;
+}
