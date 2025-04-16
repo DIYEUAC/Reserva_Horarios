@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Panel Participante - Reserva de Reuniones</title>
-  <link rel="icon" href="images/logo incuba icono.png" type="image/png"> <!-- Favicon -->
+  <link rel="icon" href="images/logo incuba icono.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -75,11 +75,20 @@
         editable: true,
         eventStartEditable: true,
         eventDurationEditable: false,
+        eventContent: function(arg) {
+          const titleLines = arg.event.title.split('\n');
+          return {
+            html: `
+              <div style="white-space: pre-line; font-size: 12px; line-height: 1.2;">
+                ${titleLines.map(line => `<div>${line}</div>`).join('')}
+              </div>
+            `
+          };
+        },
         eventClick: function(info) {
           const evento = info.event;
 
-          // Si el título es "Disponible", se crea una nueva reserva
-          if (evento.title === "Disponible") {
+          if (evento.title.includes("Disponible")) {
             Swal.fire({
               title: 'Reservar Cita',
               html:
@@ -98,12 +107,9 @@
               }
             }).then(result => {
               if (result.isConfirmed) {
-                // Eliminar el evento "Disponible"
                 evento.remove();
 
-                // Crear el evento con el nombre del emprendedor y correo en el título
                 const title = `${result.value.nombre}\n${userEmail}`;
-
                 calendar.addEvent({
                   title: title,
                   start: evento.startStr,
@@ -111,6 +117,7 @@
                   color: '#2196F3',
                   email: userEmail
                 });
+
                 Swal.fire('¡Cita registrada!', '', 'success');
                 // Aquí agregar lógica para guardar en backend
               }
@@ -125,19 +132,17 @@
               cancelButtonText: 'Cancelar'
             }).then(result => {
               if (result.isConfirmed) {
-                // Eliminar la cita
                 evento.remove();
 
-                // Volver a agregar un evento "Disponible" en el mismo horario
                 calendar.addEvent({
                   title: `${evento.start.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}\nDisponible`,
                   start: evento.startStr,
                   end: evento.endStr,
-                  color: '#67bf5c' // Puedes ajustar el color a tu preferencia
+                  color: '#67bf5c'
                 });
 
                 Swal.fire('Eliminado', 'Tu cita ha sido eliminada y el espacio está disponible.', 'success');
-                // Aquí agregar lógica para eliminar del backend y hacer que el espacio se vuelva disponible para otros usuarios
+                // Aquí agregar lógica para eliminar del backend
               }
             });
           }
