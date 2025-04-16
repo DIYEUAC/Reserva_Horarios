@@ -74,6 +74,8 @@
         locale: 'es',
         editable: false,
         eventOverlap: false,
+        allDaySlot: false,
+        weekends: false, 
         eventContent: function(arg) {
           const titleLines = arg.event.title.split('\n');
           return {
