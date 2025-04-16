@@ -5,9 +5,8 @@
   <title>Panel Participante - Reserva de Reuniones</title>
   <link rel="icon" href="images/logo 30x30 incuba.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <header>
@@ -72,9 +71,8 @@
         slotMinTime: '08:00:00',
         slotMaxTime: '15:30:00',
         locale: 'es',
-        editable: true,
-        eventStartEditable: true,
-        eventDurationEditable: false,
+        editable: false,
+        eventOverlap: false,
         eventContent: function(arg) {
           const titleLines = arg.event.title.split('\n');
           return {
@@ -146,9 +144,6 @@
               }
             });
           }
-        },
-        eventAllow: function(dropInfo, draggedEvent) {
-          return draggedEvent.extendedProps.email === userEmail;
         },
         events: eventos.map(evento => {
           if (evento.title === 'Disponible') {
