@@ -95,7 +95,6 @@
               html:
                 '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
                 '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
-                `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>`,
               focusConfirm: false,
               preConfirm: () => {
                 const nombre = document.getElementById('nombreEmprendimiento').value.trim();
@@ -139,7 +138,6 @@
                   title: `${evento.start.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}\nDisponible`,
                   start: evento.startStr,
                   end: evento.endStr,
-                  color: '#67bf5c'
                 });
 
                 Swal.fire('Eliminado', 'Tu cita ha sido eliminada y el espacio está disponible.', 'success');
@@ -153,7 +151,6 @@
             return {
               ...evento,
               title: `${new Date(evento.start).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}\nDisponible`,
-              color: '#67bf5c'
             };
           }
           return evento;
