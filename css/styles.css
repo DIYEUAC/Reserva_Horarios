@@ -101,12 +101,6 @@ footer div {
   font-size: 0.9em;
   white-space: pre-line;
 }
-.fc-event {
-    min-height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    padding: 2px 4px !important;
-}
 .fc-timegrid-event,
 .fc-timegrid-event-harness {
     height: auto !important;
