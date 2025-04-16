@@ -72,9 +72,6 @@
         slotMaxTime: '15:30:00',
         locale: 'es',
         editable: false,
-        eventStartEditable: false,
-        eventDurationEditable: false,
-        selectable: false,
         eventClick: function(info) {
           const evento = info.event;
           if (evento.extendedProps.email === userEmail) {
@@ -94,11 +91,12 @@
           }
         },
         dateClick: function(info) {
-          const clickedTime = new Date(info.dateStr).toISOString().slice(0, 16);
-          const slotDisponible = eventos.find(e =>
-            new Date(e.start).toISOString().slice(0, 16) === clickedTime &&
-            e.title === "Disponible"
+          // Verifica si el slot tiene un evento "Disponible"
+          const slotDisponible = calendar.getEvents().find(ev =>
+            ev.startStr === info.dateStr &&
+            ev.title === "Disponible"
           );
+
           if (!slotDisponible) return;
 
           Swal.fire({
@@ -106,7 +104,7 @@
             html:
               '<input type="text" id="nombreEmprendimiento" class="swal2-input" placeholder="Nombre del emprendimiento">' +
               '<input type="text" id="celular" class="swal2-input" placeholder="Celular" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')">' +
-              `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>` ,
+              `<input type="email" id="correo" class="swal2-input" value="${userEmail}" readonly>`,
             focusConfirm: false,
             preConfirm: () => {
               const nombre = document.getElementById('nombreEmprendimiento').value.trim();
@@ -119,6 +117,10 @@
             }
           }).then(result => {
             if (result.isConfirmed) {
+              // Elimina el evento "Disponible"
+              slotDisponible.remove();
+
+              // Añade la nueva cita
               calendar.addEvent({
                 title: result.value.nombre,
                 start: info.dateStr,
@@ -126,6 +128,7 @@
                 color: '#2196F3',
                 email: userEmail
               });
+
               Swal.fire('¡Cita registrada!', '', 'success');
               // Aquí agregar lógica para guardar en backend
             }
@@ -144,6 +147,7 @@
       });
     });
   </script>
+
   <footer>
     <img src="images/LOGO Uandina blanco2.png" alt="Logo UAC" class="footer-logo">
     <div>© 2025 Universidad Andina del Cusco - Incuba Andina Lab. Todos los derechos reservados.</div>
