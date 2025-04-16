@@ -49,6 +49,8 @@ footer div {
 }
 #userFolderLink {
     margin-top: 0.5rem;
+}
+#userFolderLink a{
     color: white;
 }
 #logoutContainer {
