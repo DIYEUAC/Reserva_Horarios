@@ -93,8 +93,6 @@ footer div {
     overflow: visible !important;
 }
 .custom-event {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     height: auto !important;
     font-size: 12px;
